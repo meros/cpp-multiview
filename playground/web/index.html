@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="Ten small programs that show how a multiview table learns which indexes to build. Edit the code, press Run, read the log.">
+<title>multiview playground</title>
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/editor.css">
+<link rel="stylesheet" href="css/page.css">
+</head>
+<body class="mv-paper">
+<a class="mv-skip-link" href="#main">Skip to the content</a>
+
+<header class="mv-topbar">
+  <div class="mv-topbar__inner">
+    <a class="mv-topbar__brand" href="#step-1"><span class="mv-topbar__brand-name">multiview</span><span class="mv-topbar__brand-sub">playground</span></a>
+    <div class="pg-stepper-wide">
+      <nav class="mv-stepper" aria-label="Lesson steps"><ol class="mv-stepper__list" id="stepper-list"></ol></nav>
+      <span class="pg-step-count" id="step-count"></span>
+      <span class="pg-step-buttons">
+        <button class="mv-button mv-button--ghost mv-button--icon js-prev" type="button" aria-label="Previous step"><span data-icon="chevron" data-size="18" data-class="mv-icon--flip"></span></button>
+        <button class="mv-button mv-button--ghost mv-button--icon js-next" type="button" aria-label="Next step"><span data-icon="chevron" data-size="18"></span></button>
+      </span>
+    </div>
+  </div>
+</header>
+
+<div class="pg-stepper-compact">
+  <nav class="mv-stepper mv-stepper--compact" aria-label="Lesson steps (compact)">
+    <span class="mv-stepper__count" id="step-count-compact"></span>
+    <span class="mv-stepper__current-title" id="step-title-compact"></span>
+    <div class="mv-stepper__tools">
+      <button class="mv-button mv-button--ghost mv-button--icon js-prev" type="button" aria-label="Previous step"><span data-icon="chevron" data-size="18" data-class="mv-icon--flip"></span></button>
+      <button class="mv-button mv-button--ghost mv-button--icon js-next" type="button" aria-label="Next step"><span data-icon="chevron" data-size="18"></span></button>
+    </div>
+    <div class="mv-stepper__progress" id="step-progress" role="progressbar" aria-valuemin="1" aria-valuemax="10" aria-valuenow="1"><span class="mv-stepper__progress-fill" id="step-progress-fill"></span></div>
+  </nav>
+</div>
+
+<main id="main" class="pg-page" tabindex="-1">
+  <noscript><p class="pg-noscript">This page needs JavaScript and WebAssembly to run the examples.</p></noscript>
+  <div class="pg-layout">
+    <div class="pg-intro mv-lesson-step__intro">
+      <div class="mv-lesson-step__overline" id="step-overline"></div>
+      <h1 class="mv-lesson-step__heading" id="step-heading" tabindex="-1"></h1>
+      <p class="mv-lesson-step__goal" id="step-goal"></p>
+    </div>
+
+    <details class="pg-details" id="step-details">
+      <summary class="pg-details__summary"><span data-icon="chevron" data-size="16" class="pg-details__chevron"></span><span>More: explanation and Try this</span></summary>
+      <div class="pg-details__body">
+        <div class="mv-lesson-step__body" id="step-body"></div>
+        <div class="pg-annotations" id="step-annotations"></div>
+        <section class="mv-lesson-step__try" aria-labelledby="try-heading">
+          <h2 class="mv-lesson-step__try-heading" id="try-heading">Try this</h2>
+          <ol class="mv-lesson-step__try-list" id="step-try"></ol>
+        </section>
+        <div id="step-done"></div>
+        <nav class="mv-lesson-step__nav" id="step-nav" aria-label="Step navigation">
+          <button class="mv-button mv-button--ghost mv-lesson-step__nav-prev" type="button"><span data-icon="chevron" data-size="16" data-class="mv-icon--flip"></span>Previous</button>
+          <button class="mv-button mv-button--secondary mv-lesson-step__nav-next" type="button">Next step<span data-icon="chevron" data-size="16"></span></button>
+        </nav>
+      </div>
+    </details>
+
+    <div class="pg-center">
+      <div class="pg-settings" id="settings" hidden></div>
+      <section class="mv-code-editor" id="editor-card" aria-labelledby="editor-file">
+        <div class="mv-code-editor__header">
+          <div class="mv-code-editor__file"><span class="mv-code-editor__file-label">Script</span><span class="mv-code-editor__file-name" id="editor-file">workload.js</span></div>
+          <div class="mv-code-editor__actions">
+            <button class="mv-chip mv-chip--interactive" type="button" id="syntax-chip"><span class="mv-chip__label">Syntax</span></button>
+            <button class="mv-button mv-button--ghost mv-code-editor__action" type="button" id="reset-button" aria-label="Reset code"><span data-icon="reset" data-size="16"></span><span class="mv-code-editor__action-label">Reset code</span></button>
+          </div>
+          <button class="mv-run-button" type="button" id="run-button" aria-keyshortcuts="Control+Enter Meta+Enter" aria-disabled="true"><span data-icon="clock" data-size="16" class="mv-run-button__icon"></span><span class="mv-run-button__label">Run</span><kbd class="mv-run-button__kbd">Ctrl &#8629;</kbd></button>
+        </div>
+        <div class="mv-code-editor__progress" aria-hidden="true"></div>
+        <div class="mv-code-editor__body" id="editor-host"></div>
+      </section>
+      <div class="pg-actions">
+        <button class="mv-button mv-button--secondary" type="button" id="again-button" hidden>Run again on the same table</button>
+        <button class="mv-button mv-button--secondary" type="button" id="show-button" hidden>Show me</button>
+      </div>
+      <div class="pg-tip" id="tip-area"></div>
+      <section class="pg-examples" id="examples" aria-labelledby="examples-title" hidden>
+        <h2 class="pg-examples__title" id="examples-title">Examples</h2>
+        <ul class="pg-examples__list" id="examples-list"></ul>
+      </section>
+    </div>
+
+    <div class="pg-right">
+      <section class="mv-run-log pg-log" id="run-log" aria-labelledby="log-title">
+        <div class="mv-run-log__header">
+          <h2 class="mv-run-log__title" id="log-title">Run log</h2>
+          <span class="mv-run-log__count">0 runs</span>
+          <button class="mv-button mv-button--ghost mv-run-log__clear" type="button">Clear</button>
+        </div>
+        <div class="mv-run-log__body" role="log" aria-live="polite" aria-relevant="additions" aria-label="Run log" tabindex="0"></div>
+      </section>
+      <div class="pg-chart" id="chart-host" hidden></div>
+      <p class="pg-lab" id="lab-link" hidden><a href="lab.html">The lab</a></p>
+    </div>
+  </div>
+</main>
+
+<footer class="mv-page__footer">
+  <p>multiview playground. Ten small programs, one table that learns.</p>
+</footer>
+
+<span class="mv-visually-hidden" role="status" id="live-status"></span>
+
+<script src="multiview.js"></script>
+<script type="module" src="js/v2/main.js"></script>
+</body>
+</html>

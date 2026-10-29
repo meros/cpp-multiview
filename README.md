@@ -228,21 +228,28 @@ How to read it:
 
 Live at https://multiview.meros.vip. It is built and deployed from this repo on every push to `main` (see `Dockerfile`, `deploy/` and `.github/workflows/ci.yml`).
 
-The playground runs the container in the browser as WebAssembly. It holds five
-copies of one table and sends them the same workload:
+The playground runs the container in your browser as WebAssembly, as a course of
+ten small programs. Each step is a program you can edit and run, a few lines of
+text, and a plain-text run log with the answer of every query, its time, its plan
+in words, and what the container did and why:
 
-| Copy | What it is |
-|---|---|
-| adaptive | the container, choosing its own indexes |
-| scan only | no index |
-| hash only | a hash index on every field, built once. Ranges and order fall back to scans |
-| sorted only | an ordered index on every field, built once |
-| hash and sorted | both on every field, built once |
+> Queries 1 to 49: scans, 157 µs each, 7.7 ms in total.
+> After query 49: built a grouped index on customer in 1.3 ms. Why now: the scans
+> had cost more than the estimate of a build.
+> Queries 50 to 2 000: lookups, 2 µs each.
 
-You see time per operation (chart and table, by operation type), index memory
-per copy, and, for the adaptive copy, its indexes, plans and a timeline of
-builds and drops. Sliders set the mix of operations, key skew, table size,
-eagerness and an index memory limit.
+The steps teach one idea each: a query and its answer, what a scan costs, that
+repeated queries make the container build an index, conditions and ordering, why a
+hash cannot answer a range, what writes cost, memory as rent, the price of
+adaptiveness, then free play. One simple bar chart appears from step 3. Hover a token in
+the editor for what it means; the Syntax chip opens a reference card.
+
+`lab.html` is the first playground: six table copies side by side, an index
+inspector, plans and a memory view, for people who want every number.
+`styleguide.html` shows the design system ([docs/design-system.md](docs/design-system.md): cream
+paper, an indigo accent, a hand-lettered display face and a small handmade layer,
+translated from a mood board; the experience is specified in
+[docs/playground-v2-experience.md](docs/playground-v2-experience.md)).
 
 ```sh
 make playground EMCC=/path/to/em++   # builds playground/web/multiview.{js,wasm}
@@ -250,7 +257,9 @@ make serve                           # http://localhost:8080
 ```
 
 `make serve` sends the headers that give the browser a finer clock (5 µs). The
-page works without them, but choices between index kinds get less exact.
+page works without them, but times under 100 µs are then shown as bounds, and
+choices between index kinds get less exact. Fonts (Shantell Sans, Nunito) are
+self-hosted under `playground/web/fonts/` (SIL Open Font License).
 
 ## Build and test
 

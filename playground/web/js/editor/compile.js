@@ -17,6 +17,7 @@ export const MAX_OPS = 200000;
 
 const PRED_NAMES = ["eq", "ge", "le", "between", "gt", "lt"]; // index = predicate op code
 const TERMINALS = ["count", "exists", "first", "sumAmount"];
+const LINE_FULL = 2000, LINE_STEP = 64;
 
 // ---- running the script -----------------------------------------------------
 
@@ -40,8 +41,20 @@ class Field {
 const describe = (v) => (v && v.constructor && v.constructor.name === "Field" ? "a field" : typeof v === "object" ? "an object" : String(v));
 
 // Run `code` against the DSL environment. Throws what the script throws.
-function execute(code, rowCount, seed) {
+function execute(code, rowCount, seed, options = {}) {
   const ops = [], labels = [], shapes = new Map();
+  // options.lines: write the source line of each op into rec[15]. A stack capture costs about 4 µs,
+  // so capture the first LINE_FULL ops and every LINE_STEP-th after; the others take the line last
+  // seen for the same key (the shape of a query, or the kind of write).
+  const lineOfKey = options.lines ? new Map() : null;
+  const lineFor = (key) => {
+    const n = ops.length;
+    if (n < LINE_FULL || n % LINE_STEP === 0 || !lineOfKey.has(key)) {
+      const pos = positionFromStack(new Error());
+      lineOfKey.set(key, pos ? pos.line : 0);
+    }
+    return lineOfKey.get(key);
+  };
   let cur = 0, s = seed >>> 0;
   const rnd = (n) => { s = (s + 0x6D2B79F5) >>> 0; let t = s; t = Math.imul(t ^ (t >>> 15), t | 1); t ^= t + Math.imul(t ^ (t >>> 7), t | 61); return Math.floor(((t ^ (t >>> 14)) >>> 0) / 4294967296 * n); };
   const zipf = (n, sk) => Math.min(n - 1, Math.floor(Math.pow(rnd(1e9) / 1e9, 1 + 4 * (sk ?? 0.5)) * n));
@@ -70,13 +83,14 @@ function execute(code, rowCount, seed) {
       const rec = [0, cur, this.preds.length, a ? a.f : 0, a ? a.op : 0, a ? a.lo : 0, a ? a.hi : 0, b ? b.f : 0, b ? b.op : 0, b ? b.lo : 0, b ? b.hi : 0, this.ord, this.desc, this.lim, t, 0];
       const key = [rec[2], rec[3], rec[4], rec[7], rec[8], rec[11], rec[12], rec[13] > 0, t].join(",");
       if (!shapes.has(key)) shapes.set(key, ops.length);
+      if (lineOfKey) rec[15] = lineFor(key);
       push(rec);
     }
     count() { this._end(0); } exists() { this._end(1); } first() { this._end(2); } sumAmount() { this._end(3); }
   }
   const where = (...p) => new Q(p);
-  const update = (row, v) => { push([1, cur, Math.floor(num(row)), num(v), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]); };
-  const churn = (row, c, a, d) => { push([2, cur, Math.floor(num(row)), num(c), num(a), num(d), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]); };
+  const update = (row, v) => { const rec = [1, cur, Math.floor(num(row)), num(v), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; if (lineOfKey) rec[15] = lineFor("u"); push(rec); };
+  const churn = (row, c, a, d) => { const rec = [2, cur, Math.floor(num(row)), num(c), num(a), num(d), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]; if (lineOfKey) rec[15] = lineFor("c"); push(rec); };
   const env = { customer: fields[0], amount: fields[1], day: fields[2], where, all: () => where(), label, rnd, zipf, update, churn, rows: rowCount };
   const fn = new Function(...Object.keys(env), '"use strict";\n' + code);
   fn(...Object.values(env));
@@ -299,7 +313,7 @@ export function lint(code, tokens = tokenize(code)) {
 
 // ---- compile ----------------------------------------------------------------
 
-export function compile(code, rowCount, seed = 12345) {
+export function compile(code, rowCount, seed = 12345, options = {}) {
   let tokens;
   let warnings = [];
   try { tokens = tokenize(code); warnings = lint(code, tokens); } catch (e) { tokens = []; }
@@ -317,7 +331,7 @@ export function compile(code, rowCount, seed = 12345) {
   if (br) return fail(br.message, br);
 
   try {
-    const r = execute(code, rowCount, seed);
+    const r = execute(code, rowCount, seed, options);
     const shapeText = r.shapes.map((i) => queryText(r.ops[i]));
     return { ok: true, ops: r.ops, labels: r.labels, shapes: r.shapes, shapeText, warnings };
   } catch (e) {

@@ -1,0 +1,200 @@
+/* Page layout and page-specific rules of the v2 playground (index.html). Components come from
+   components.css and are not restyled here; every class in this file starts with pg-.
+   Breakpoints (literals, as design-system.md 4.2 asks): 600, 760, 960, 1100. */
+
+/* ---- shell ---- */
+.pg-page {
+  max-width: 1480px;
+  margin-inline: auto;
+  padding: var(--space-6) var(--space-6) var(--space-16);
+}
+.pg-page:focus { outline: none; }
+.pg-noscript { padding: var(--space-4); border: var(--border); border-radius: var(--radius-lg); }
+
+/* ---- stepper: dots in the top bar from 960 px, a compact band under it below ---- */
+.pg-stepper-wide { display: flex; align-items: center; gap: var(--space-3); min-width: 0; flex: 1 1 auto; }
+.pg-step-count {
+  flex: none;
+  margin-left: var(--space-2);
+  color: var(--color-text-muted);
+  font-size: var(--text-label-size);
+  line-height: var(--text-label-lh);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.pg-step-buttons { display: flex; gap: var(--space-1); flex: none; }
+.pg-stepper-compact { display: none; padding-inline: var(--layout-gutter); border-bottom: var(--border); background: var(--color-bg); }
+@media (max-width: 959px) {
+  .pg-stepper-wide { display: none; }
+  .pg-stepper-compact { display: block; }
+}
+
+/* ---- three columns: lesson, editor, log ---- */
+.pg-layout {
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1.15fr) minmax(400px, 1fr);
+  grid-template-areas: "intro center right" "details center right";
+  grid-template-rows: auto 1fr;
+  column-gap: var(--space-6);
+  align-items: start;
+}
+.pg-layout > * { min-width: 0; }
+.pg-intro { grid-area: intro; }
+.pg-details { grid-area: details; margin-top: var(--space-5); }
+.pg-center { grid-area: center; display: flex; flex-direction: column; gap: var(--space-4); }
+.pg-right { grid-area: right; display: flex; flex-direction: column; gap: var(--space-6); }
+
+/* the text column is narrow: the heading takes the title size here */
+@media (min-width: 1100px) {
+  .pg-intro .mv-lesson-step__heading { font-size: var(--text-title-size); line-height: var(--text-title-lh); letter-spacing: var(--text-title-tracking); }
+  .pg-intro .mv-lesson-step__goal { font-size: var(--text-body-size); line-height: var(--text-body-lh); }
+  .pg-details > .pg-details__summary { display: none; }
+}
+
+/* below 1100 px the lesson is a band above the editor and the log; the explanation is a drawer */
+@media (max-width: 1099px) {
+  .pg-layout {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-areas: "intro intro" "details details" "center right";
+    grid-template-rows: none;
+    row-gap: var(--space-6);
+  }
+  .pg-details { margin-top: 0; }
+  .pg-right { align-self: stretch; }
+}
+/* phone: editor first, then the run row, then the log, then the explanation */
+@media (max-width: 759px) {
+  .pg-page { padding-inline: var(--space-4); padding-top: var(--space-4); }
+  .pg-layout {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas: "intro" "center" "right" "details";
+  }
+}
+
+/* ---- explanation drawer (details) ---- */
+.pg-details__summary {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 44px;
+  padding: 0;
+  list-style: none;
+  cursor: pointer;
+  color: var(--color-text-secondary);
+  font-size: var(--text-heading-size);
+  line-height: var(--text-heading-lh);
+  font-weight: var(--text-heading-weight);
+  border-top: var(--border);
+}
+.pg-details__summary::-webkit-details-marker { display: none; }
+.pg-details__summary:hover { color: var(--color-text); }
+.pg-details__summary:focus-visible { outline: var(--focus-width) solid var(--color-focus); outline-offset: var(--focus-offset-tight); border-radius: var(--radius-sm); }
+.pg-details__chevron { color: var(--color-faint); transition: transform var(--dur-fast) var(--ease-out); }
+.pg-details[open] > .pg-details__summary .pg-details__chevron { transform: rotate(90deg); }
+.pg-details__body { display: flex; flex-direction: column; gap: var(--space-5); padding-top: var(--space-2); }
+.pg-details__body .mv-lesson-step__body > * + * { margin-top: var(--space-4); }
+.pg-details .mv-lesson-step__nav { margin-top: var(--space-4); }
+.pg-annotations { display: flex; flex-direction: column; gap: var(--space-4); }
+.pg-annotations:empty { display: none; }
+.pg-details__body .mv-lesson-step__try { margin-top: 0; }
+
+/* ---- settings row above the editor ---- */
+.pg-settings { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-3) var(--space-5); }
+.pg-setting { display: flex; align-items: center; gap: var(--space-2); }
+.pg-setting__label {
+  color: var(--color-text-muted);
+  font-size: var(--text-overline-size);
+  line-height: var(--text-overline-lh);
+  font-weight: var(--text-overline-weight);
+  letter-spacing: var(--text-overline-tracking);
+  text-transform: uppercase;
+}
+.pg-settings .mv-segmented { flex-wrap: wrap; }
+
+/* ---- under the editor ---- */
+.pg-actions { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.pg-actions .mv-button[hidden] { display: none; }
+.pg-tip:empty { display: none; }
+.pg-examples__title { font-size: var(--text-heading-size); line-height: var(--text-heading-lh); font-weight: var(--text-heading-weight); color: var(--color-text-secondary); }
+.pg-examples__list { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-top: var(--space-2); }
+.pg-example { height: auto; min-height: var(--control-h); text-align: left; }
+
+/* the code the lesson points at */
+.pg-link-hl { background: var(--color-highlight-bg); }
+
+/* ---- run log ---- */
+.pg-log .mv-run-log__run { min-width: 0; }
+.pg-log .mv-run-log__text { white-space: pre-wrap; overflow-wrap: anywhere; }
+.pg-log .pg-wrap { white-space: normal; }
+.pg-run-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-2); padding-block: var(--space-1); }
+.pg-run-head .mv-chip { flex: none; }
+.pg-clock-tip { margin: var(--space-2) var(--space-4); }
+.pg-block-head {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 var(--space-3);
+  width: 100%;
+  margin: var(--space-1) 0 0;
+  padding: 0 var(--space-4);
+  border: 0;
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-family: var(--font-mono);
+  font-size: var(--text-code-sm-size);
+  line-height: var(--text-code-lh);
+  text-align: left;
+  cursor: pointer;
+}
+.pg-block-head:hover { color: var(--color-text); background: var(--color-surface-sunken); }
+.pg-block-head:focus-visible { outline: var(--focus-width) solid var(--color-focus); outline-offset: -2px; }
+.pg-block-label { color: var(--color-text); font-weight: var(--font-weight-semibold); }
+.pg-block-text { min-width: 0; overflow-wrap: anywhere; }
+.pg-block-count { color: var(--color-text-muted); }
+.pg-plan-tail { color: var(--color-text-muted); }
+.pg-more { margin-left: var(--space-4); height: 24px; }
+.pg-log .pg-log-notice:empty { display: none; }
+.pg-log .pg-error { margin: var(--space-2) var(--space-4); }
+.pg-log-older { margin: var(--space-2) var(--space-4) 0; }
+.pg-log-live { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+
+/* ---- chart and links under the log ---- */
+.pg-chart[hidden], .pg-lab[hidden] { display: none; }
+.pg-chart { margin-top: var(--space-4); }
+.pg-lab { font-size: var(--text-small-size); line-height: var(--text-small-lh); }
+
+/* ---- tooltip addition in the editor ---- */
+.pg-first-use { margin-top: 2px; font: 12px/16px var(--font-sans); color: var(--color-text-muted); }
+
+/* ---- syntax card in a drawer: a side sheet, a bottom sheet on a phone ---- */
+.pg-drawer {
+  position: fixed;
+  z-index: var(--z-drawer);
+  top: var(--topbar-h);
+  right: 0;
+  bottom: 0;
+  width: min(440px, 100vw);
+  overflow: auto;
+  padding: var(--space-4);
+  background: var(--color-bg);
+  border-left: var(--border);
+  box-shadow: var(--shadow-3);
+}
+.pg-drawer[hidden] { display: none; }
+.pg-drawer__close { position: absolute; top: var(--space-2); right: var(--space-2); }
+.pg-drawer__body { padding-top: var(--space-6); }
+@media (max-width: 599px) {
+  .pg-drawer { top: auto; left: 0; width: 100vw; max-height: 70vh; border-left: 0; border-top: var(--border); border-radius: var(--radius-lg) var(--radius-lg) 0 0; }
+}
+.pg-syntax-line { margin: var(--space-3) 0 var(--space-2); font-size: var(--text-small-size); line-height: var(--text-small-lh); color: var(--color-text-secondary); }
+.pg-syntax-line code { font-family: var(--font-mono); font-size: var(--text-code-sm-size); }
+.pg-syntax-desc { color: var(--color-text-secondary); font-size: var(--text-small-size); line-height: 24px; margin-right: var(--space-2); }
+.pg-syntax-note { flex-basis: 100%; margin-top: var(--space-1); color: var(--color-text-muted); font-size: var(--text-small-size); line-height: var(--text-small-lh); }
+.pg-dim { opacity: 0.5; }
+.mv-syntax-card__groups { margin-top: var(--space-4); }
+
+@media (pointer: coarse) {
+  .pg-block-head { min-height: 44px; align-content: center; }
+}
+
+/* The details block already carries the space under the goal line; the body must not add a second one. */
+.pg-details__body > .mv-lesson-step__body { margin-top: 0; }
