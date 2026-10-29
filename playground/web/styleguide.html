@@ -1,0 +1,502 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>multiview playground: style guide</title>
+<meta name="color-scheme" content="light dark">
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/editor.css">
+<script type="module" src="js/ui/styleguide.js"></script>
+</head>
+<body class="mv-paper">
+<a class="mv-skip-link" href="#main">Skip to the content</a>
+
+<header class="mv-topbar">
+  <div class="mv-topbar__inner">
+    <a class="mv-topbar__brand" href="#top"><span class="mv-topbar__brand-name">multiview</span><span class="mv-topbar__brand-sub">style guide</span></a>
+    <div class="mv-topbar__tools">
+      <span class="mv-text-label mv-text-muted">Theme</span>
+      <div class="mv-segmented" role="group" aria-label="Theme" id="sg-theme">
+        <button class="mv-segmented__option" type="button" data-theme-choice="auto" aria-pressed="true">Auto</button>
+        <button class="mv-segmented__option" type="button" data-theme-choice="light" aria-pressed="false">Light</button>
+        <button class="mv-segmented__option" type="button" data-theme-choice="dark" aria-pressed="false">Dark</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main id="main" class="mv-page mv-page__main sg-main" tabindex="-1">
+  <h1 id="top" class="mv-squiggle-underline">Style guide</h1>
+  <p class="mv-text-lead mv-text-secondary sg-lead">Every component of the multiview playground in every variant and state, with its class names. Source of the values: <code>docs/design-system.md</code> and <code>css/tokens.css</code>. The theme switch above sets <code>data-theme</code> on <code>&lt;html&gt;</code>; Auto removes it and follows the system.</p>
+  <nav class="sg-toc" aria-label="Sections" id="sg-toc"></nav>
+
+  <!-- ===================== FOUNDATIONS ===================== -->
+  <section class="sg-section" id="colour" aria-labelledby="h-colour">
+    <h2 class="mv-squiggle-underline" id="h-colour">Colour</h2>
+    <p class="sg-note">Swatches show the live computed value of each token, so they follow the theme. Prefix and role names are the token names.</p>
+    <div id="sg-ramps"></div>
+  </section>
+
+  <section class="sg-section" id="type" aria-labelledby="h-type">
+    <h2 class="mv-squiggle-underline" id="h-type">Type scale</h2>
+    <p class="sg-note">Classes <code>.mv-text-display</code> to <code>.mv-text-stat</code>. Sizes shown are computed at the current width (display and stat shrink below 960 px).</p>
+    <div id="sg-type"></div>
+  </section>
+
+  <section class="sg-section" id="shape" aria-labelledby="h-shape">
+    <h2 class="mv-squiggle-underline" id="h-shape">Spacing, radii, elevation, motion</h2>
+    <div id="sg-shape"></div>
+  </section>
+
+  <section class="sg-section" id="icons" aria-labelledby="h-icons">
+    <h2 class="mv-squiggle-underline" id="h-icons">Icons</h2>
+    <p class="sg-note">Fourteen inline SVG icons from <code>js/ui/icons.js</code>: <code>icon(name, { size, title })</code>. Stroke 1.75, round caps and joins, <code>currentColor</code>. Sizes 14, 16 and 20 px.</p>
+    <div id="sg-icons"></div>
+  </section>
+
+  <!-- ===================== COMPONENTS ===================== -->
+  <section class="sg-section" id="button" aria-labelledby="h-button">
+    <h2 class="mv-squiggle-underline" id="h-button">Button</h2>
+    <p class="sg-classes"><code>.mv-button</code> <code>--secondary</code> <code>--ghost</code> <code>--icon</code>. There is no primary variant: the Run button is the only filled accent control.</p>
+    <div class="sg-demo sg-row">
+      <button class="mv-button mv-button--secondary" type="button"><span data-icon="share" data-size="16"></span>Share</button>
+      <button class="mv-button mv-button--secondary" type="button">Next step<span data-icon="chevron" data-size="16"></span></button>
+      <button class="mv-button mv-button--ghost" type="button"><span data-icon="reset" data-size="16"></span>Reset</button>
+      <button class="mv-button mv-button--ghost" type="button"><span data-icon="copy" data-size="16"></span>Copy</button>
+      <button class="mv-button mv-button--ghost" type="button"><span data-icon="chevron" data-size="16" data-class="mv-icon--flip"></span>Previous</button>
+      <button class="mv-button mv-button--secondary mv-button--icon" type="button" aria-label="Theme"><span data-icon="info" data-size="18"></span></button>
+      <button class="mv-button mv-button--ghost mv-button--icon" type="button" aria-label="Close"><span data-icon="cross" data-size="18"></span></button>
+    </div>
+    <p class="sg-label">Disabled (<code>disabled</code> and <code>aria-disabled="true"</code>)</p>
+    <div class="sg-demo sg-row">
+      <button class="mv-button mv-button--secondary" type="button" disabled>Disabled</button>
+      <button class="mv-button mv-button--ghost" type="button" aria-disabled="true">aria-disabled</button>
+    </div>
+  </section>
+
+  <section class="sg-section" id="run-button" aria-labelledby="h-run-button">
+    <h2 class="mv-squiggle-underline" id="h-run-button">Run button</h2>
+    <p class="sg-classes"><code>.mv-run-button</code> <code>__icon</code> <code>__label</code> <code>__kbd</code>; states from ARIA: <code>[aria-disabled="true"]</code>, <code>[aria-busy="true"]</code>.</p>
+    <div class="sg-demo sg-row">
+      <div class="sg-state"><button class="mv-run-button" type="button" aria-keyshortcuts="Control+Enter Meta+Enter"><span data-icon="play" data-size="16" class="mv-run-button__icon"></span><span class="mv-run-button__label">Run</span><kbd class="mv-run-button__kbd">Ctrl ↵</kbd></button><span class="sg-state-name">default</span></div>
+      <div class="sg-state"><button class="mv-run-button" type="button" aria-disabled="true"><span data-icon="play" data-size="16" class="mv-run-button__icon"></span><span class="mv-run-button__label">Run</span><kbd class="mv-run-button__kbd">Ctrl ↵</kbd></button><span class="sg-state-name">disabled (engine loading)</span></div>
+      <div class="sg-state"><button class="mv-run-button" type="button" aria-busy="true"><span data-icon="stop" data-size="16" class="mv-run-button__icon"></span><span class="mv-run-button__label">Running</span></button><span class="sg-state-name">loading, can stop</span></div>
+      <div class="sg-state"><button class="mv-run-button" type="button" aria-busy="true"><span data-icon="clock" data-size="16" class="mv-run-button__icon"></span><span class="mv-run-button__label">Running</span></button><span class="sg-state-name">loading</span></div>
+    </div>
+    <p class="sg-note">Hover, active and focus-visible: use the mouse and Tab on the buttons above. Hover uses <code>--color-accent-hover</code>, active uses <code>--color-accent-active</code>.</p>
+  </section>
+
+  <section class="sg-section" id="code-editor" aria-labelledby="h-code-editor">
+    <h2 class="mv-squiggle-underline" id="h-code-editor">Code editor</h2>
+    <p class="sg-classes"><code>.mv-code-editor</code> <code>__header</code> <code>__file</code> (<code>__file-label</code>, <code>__file-name</code>) <code>__actions</code> <code>__action</code> (<code>__action-label</code>) <code>__progress</code> <code>__body</code>; modifiers <code>--readonly</code> and <code>--error</code>; running is <code>[aria-busy="true"]</code>. The editor inside is the real <code>createEditor</code> widget. Click Run to see the 2 px progress bar for 1.6 s.</p>
+    <div class="sg-demo">
+      <section class="mv-code-editor" id="sg-editor-card" aria-labelledby="sg-editor-file">
+        <div class="mv-code-editor__header">
+          <div class="mv-code-editor__file"><span class="mv-code-editor__file-label">Script</span><span class="mv-code-editor__file-name" id="sg-editor-file">workload.js</span></div>
+          <div class="mv-code-editor__actions">
+            <button class="mv-button mv-button--ghost mv-code-editor__action" type="button" aria-label="Reset" id="sg-reset"><span data-icon="reset" data-size="16"></span><span class="mv-code-editor__action-label">Reset</span></button>
+            <button class="mv-button mv-button--ghost mv-code-editor__action" type="button" aria-label="Copy" id="sg-copy"><span data-icon="copy" data-size="16"></span><span class="mv-code-editor__action-label">Copy</span></button>
+          </div>
+          <button class="mv-run-button" type="button" id="sg-run" aria-keyshortcuts="Control+Enter Meta+Enter"><span data-icon="play" data-size="16" class="mv-run-button__icon"></span><span class="mv-run-button__label">Run</span><kbd class="mv-run-button__kbd">Ctrl ↵</kbd></button>
+          <span class="mv-visually-hidden" role="status" id="sg-run-status"></span>
+        </div>
+        <div class="mv-code-editor__progress" aria-hidden="true"></div>
+        <div class="mv-code-editor__body" id="sg-editor-host"></div>
+      </section>
+    </div>
+    <p class="sg-label">Read-only variant (the C++ view in a step)</p>
+    <div class="sg-demo">
+      <section class="mv-code-editor mv-code-editor--readonly" aria-labelledby="sg-cpp-file">
+        <div class="mv-code-editor__header">
+          <div class="mv-code-editor__file"><span class="mv-code-editor__file-label">C++</span><span class="mv-code-editor__file-name" id="sg-cpp-file">query.cpp</span></div>
+          <div class="mv-code-editor__actions">
+            <button class="mv-button mv-button--ghost mv-code-editor__action" type="button" aria-label="Copy"><span data-icon="copy" data-size="16"></span><span class="mv-code-editor__action-label">Copy</span></button>
+          </div>
+        </div>
+        <div class="mv-code-editor__body" id="sg-cpp-host"></div>
+      </section>
+    </div>
+  </section>
+
+  <section class="sg-section" id="run-log" aria-labelledby="h-run-log">
+    <h2 class="mv-squiggle-underline" id="h-run-log">Run log</h2>
+    <p class="sg-classes"><code>.mv-run-log</code> <code>__header</code> <code>__title</code> <code>__count</code> <code>__clear</code> <code>__body</code> (<code>role="log"</code>) <code>__run</code> (<code>--new</code> animates) <code>__run-head</code> <code>__line</code> <code>__num</code> <code>__icon</code> <code>__text</code> <code>__note</code> <code>__kw</code> <code>__verb</code> <code>__figure</code> <code>__empty</code> (<code>__empty-text</code>, <code>__empty-title</code>). Line modifiers: <code>--value</code> <code>--timing</code> <code>--plan</code> (+ <code>--index</code>) <code>--event</code> (+ <code>--build</code> | <code>--drop</code> | <code>--trial</code>) <code>--insight</code> <code>--warning</code> <code>--error</code>.</p>
+    <div class="sg-demo">
+      <section class="mv-run-log" aria-labelledby="sg-log-title">
+        <div class="mv-run-log__header">
+          <h2 class="mv-run-log__title" id="sg-log-title">Run log</h2>
+          <span class="mv-run-log__count">2 runs</span>
+          <button class="mv-button mv-button--ghost mv-run-log__clear" type="button" id="sg-log-replay">Replay motion</button>
+        </div>
+        <div class="mv-run-log__body" role="log" aria-live="polite" aria-relevant="additions" aria-label="Run log" tabindex="0">
+          <div class="mv-run-log__run">
+            <div class="mv-run-log__run-head">Run 1 · 14:02:03 · 50&#8201;000 rows</div>
+            <div class="mv-run-log__line mv-run-log__line--value"><span class="mv-run-log__num">1</span><span data-icon="chevron" data-size="16" class="mv-run-log__icon"></span><span class="mv-run-log__text">count = <span class="mv-run-log__figure">18</span></span></div>
+            <div class="mv-run-log__line mv-run-log__line--timing"><span class="mv-run-log__num">2</span><span data-icon="clock" data-size="16" class="mv-run-log__icon"></span><span class="mv-run-log__text"><span class="mv-run-log__figure">412&#8239;µs</span>  where(customer.eq(42)).count()</span><span class="mv-run-log__note">about 8&#8239;ns per row: every row was read</span></div>
+            <div class="mv-run-log__line mv-run-log__line--plan"><span class="mv-run-log__num">3</span><span data-icon="scan" data-size="16" class="mv-run-log__icon"></span><span class="mv-run-log__text"><span class="mv-run-log__kw">plan</span>scan 50&#8201;000 rows</span></div>
+          </div>
+          <div class="mv-run-log__run mv-run-log__run--new" id="sg-log-new">
+            <div class="mv-run-log__run-head">Run 2 · 14:02:11 · 50&#8201;000 rows</div>
+            <div class="mv-run-log__line mv-run-log__line--plan mv-run-log__line--index"><span class="mv-run-log__num">1</span><span data-icon="index" data-size="16" class="mv-run-log__icon"></span><span class="mv-run-log__text"><span class="mv-run-log__kw">plan</span>probe grouped index on customer (equality)</span></div>
+            <div class="mv-run-log__line mv-run-log__line--event mv-run-log__line--build"><span class="mv-run-log__num">2</span><span data-icon="index" data-size="16" class="mv-run-log__icon"></span><span class="mv-run-log__text"><span class="mv-run-log__kw">event</span><span class="mv-run-log__verb">built</span> grouped index on customer · <span class="mv-run-log__figure">3.1&#8239;ms</span> · <span class="mv-run-log__figure">0.9&#8239;MB</span></span><span class="mv-run-log__note">the scans cost more than building the index</span></div>
+            <div class="mv-run-log__line mv-run-log__line--event mv-run-log__line--drop"><span class="mv-run-log__num">3</span><span data-icon="cross" data-size="16" class="mv-run-log__icon"></span><span class="mv-run-log__text"><span class="mv-run-log__kw">event</span><span class="mv-run-log__verb">dropped</span> ordered index on day · unused 400 queries</span><span class="mv-run-log__note">it cost memory and write time and saved nothing</span></div>
+            <div class="mv-run-log__line mv-run-log__line--event mv-run-log__line--trial"><span class="mv-run-log__num">4</span><span data-icon="clock" data-size="16" class="mv-run-log__icon"></span><span class="mv-run-log__text"><span class="mv-run-log__kw">event</span><span class="mv-run-log__verb">trial</span> sorted array vs grouped on amount</span></div>
+            <div class="mv-run-log__line mv-run-log__line--timing"><span class="mv-run-log__num">5</span><span data-icon="clock" data-size="16" class="mv-run-log__icon"></span><span class="mv-run-log__text"><span class="mv-run-log__figure">11&#8239;µs</span>  where(customer.eq(42)).count()</span></div>
+            <div class="mv-run-log__line mv-run-log__line--insight"><span class="mv-run-log__num"></span><span data-icon="info" data-size="16" class="mv-run-log__icon"></span><span class="mv-run-log__text">The second query was 38× faster: it used the index built in run 2.</span></div>
+            <div class="mv-run-log__line mv-run-log__line--warning"><span class="mv-run-log__num">6</span><span data-icon="warning" data-size="16" class="mv-run-log__icon"></span><span class="mv-run-log__text"><span class="mv-run-log__figure">&lt; 1&#8239;µs</span>  below clock resolution</span><span class="mv-run-log__note">the browser clock ticks in 5&#8239;µs steps here; run more queries</span></div>
+            <div class="mv-run-log__line mv-run-log__line--error"><span class="mv-run-log__num">7</span><span data-icon="cross" data-size="16" class="mv-run-log__icon"></span><span class="mv-run-log__text">line 4: unknown field "custmer"</span><span class="mv-run-log__note">did you mean customer?</span></div>
+          </div>
+        </div>
+      </section>
+    </div>
+    <p class="sg-label">Empty state</p>
+    <div class="sg-demo">
+      <section class="mv-run-log" aria-label="Run log, empty">
+        <div class="mv-run-log__header"><h2 class="mv-run-log__title">Run log</h2><span class="mv-run-log__count">0 runs</span></div>
+        <div class="mv-run-log__body"><div class="mv-run-log__empty"><span class="mv-mascot mv-mascot--sleepy" aria-hidden="true"></span><div class="mv-run-log__empty-text"><div class="mv-run-log__empty-title">Nothing ran yet</div><p>Press Run (Ctrl ↵). Output appears here.</p></div></div></div>
+      </section>
+    </div>
+  </section>
+
+  <section class="sg-section" id="callout" aria-labelledby="h-callout">
+    <h2 class="mv-squiggle-underline" id="h-callout">Callout</h2>
+    <p class="sg-classes"><code>.mv-callout</code> <code>--insight</code> <code>--tip</code> <code>--warning</code>; <code>__icon</code> <code>__title</code> <code>__body</code> <code>__action</code>. The title starts with the kind so the meaning is in text too.</p>
+    <div class="sg-demo sg-stack">
+      <aside class="mv-callout mv-callout--insight" role="note">
+        <span data-icon="info" data-size="20" class="mv-callout__icon"></span>
+        <h3 class="mv-callout__title">Insight: the index paid for itself after 31 queries</h3>
+        <div class="mv-callout__body"><p>The container built the index when its scans had cost more than a build would. Later queries read one group, not every row.</p></div>
+        <div class="mv-callout__action"><a href="#run-log">See the run log</a></div>
+      </aside>
+      <aside class="mv-callout mv-callout--tip" role="note">
+        <span data-icon="tip" data-size="20" class="mv-callout__icon"></span>
+        <h3 class="mv-callout__title">Try: change 42 to a customer that does not exist</h3>
+        <div class="mv-callout__body"><p>The count is 0, and the plan stays the same.</p></div>
+      </aside>
+      <aside class="mv-callout mv-callout--warning" role="note">
+        <span data-icon="warning" data-size="20" class="mv-callout__icon"></span>
+        <h3 class="mv-callout__title">Careful: these timings are below the clock resolution</h3>
+        <div class="mv-callout__body"><p>The browser clock ticks in 5&#8239;µs steps here. Run more queries so the total reaches at least 10 ticks.</p></div>
+        <div class="mv-callout__action"><button class="mv-button mv-button--ghost" type="button">Run 200 queries</button></div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="sg-section" id="syntax-card" aria-labelledby="h-syntax-card">
+    <h2 class="mv-squiggle-underline" id="h-syntax-card">Syntax card</h2>
+    <p class="sg-classes"><code>.mv-syntax-card</code> <code>__header</code> <code>__overline</code> <code>__title</code> <code>__grammar</code> <code>__groups</code> <code>__group</code> (<code>--fields</code> <code>--predicates</code> <code>--query</code> <code>--terminals</code> <code>--writes</code> <code>--helpers</code>) <code>__group-label</code> <code>__chips</code>, with <code>.mv-chip--code</code> chips (buttons here, so they have the interactive states).</p>
+    <div class="sg-demo">
+      <section class="mv-syntax-card" aria-labelledby="sg-card-title">
+        <header class="mv-syntax-card__header">
+          <span class="mv-syntax-card__overline">Reference</span>
+          <h3 class="mv-syntax-card__title" id="sg-card-title">A query</h3>
+        </header>
+        <pre class="mv-syntax-card__grammar"><span class="tk-query">where</span><span class="tk-punct">(</span><em class="tk-field">field</em><span class="tk-punct">.</span><em class="tk-pred">predicate</em><span class="tk-punct">(</span><em class="tk-id">value</em><span class="tk-punct">), …).</span><em class="tk-term">terminal</em><span class="tk-punct">()</span></pre>
+        <div class="mv-syntax-card__groups">
+          <div class="mv-syntax-card__group mv-syntax-card__group--fields"><span class="mv-syntax-card__group-label">Fields</span><div class="mv-syntax-card__chips"><button class="mv-chip mv-chip--code mv-chip--interactive" type="button">customer</button><button class="mv-chip mv-chip--code mv-chip--interactive" type="button">amount</button><button class="mv-chip mv-chip--code mv-chip--interactive" type="button" aria-pressed="true">day</button></div></div>
+          <div class="mv-syntax-card__group mv-syntax-card__group--predicates"><span class="mv-syntax-card__group-label">Predicates</span><div class="mv-syntax-card__chips"><button class="mv-chip mv-chip--code mv-chip--interactive" type="button">eq</button><button class="mv-chip mv-chip--code mv-chip--interactive" type="button">ge</button><button class="mv-chip mv-chip--code mv-chip--interactive" type="button">between</button></div></div>
+          <div class="mv-syntax-card__group mv-syntax-card__group--query"><span class="mv-syntax-card__group-label">Query</span><div class="mv-syntax-card__chips"><button class="mv-chip mv-chip--code mv-chip--interactive" type="button">where</button><button class="mv-chip mv-chip--code mv-chip--interactive" type="button">orderBy</button><button class="mv-chip mv-chip--code mv-chip--interactive" type="button">limit</button></div></div>
+          <div class="mv-syntax-card__group mv-syntax-card__group--terminals"><span class="mv-syntax-card__group-label">Terminals</span><div class="mv-syntax-card__chips"><button class="mv-chip mv-chip--code mv-chip--interactive" type="button">count</button><button class="mv-chip mv-chip--code mv-chip--interactive" type="button">first</button><button class="mv-chip mv-chip--code mv-chip--interactive" type="button">exists</button></div></div>
+          <div class="mv-syntax-card__group mv-syntax-card__group--writes"><span class="mv-syntax-card__group-label">Writes</span><div class="mv-syntax-card__chips"><button class="mv-chip mv-chip--code mv-chip--interactive" type="button">update</button><button class="mv-chip mv-chip--code mv-chip--interactive" type="button">churn</button></div></div>
+          <div class="mv-syntax-card__group mv-syntax-card__group--helpers"><span class="mv-syntax-card__group-label">Helpers</span><div class="mv-syntax-card__chips"><button class="mv-chip mv-chip--code mv-chip--interactive" type="button">rnd</button><button class="mv-chip mv-chip--code mv-chip--interactive" type="button">zipf</button><button class="mv-chip mv-chip--code mv-chip--interactive" type="button">label</button></div></div>
+        </div>
+      </section>
+    </div>
+  </section>
+
+  <section class="sg-section" id="annotated-code" aria-labelledby="h-annotated-code">
+    <h2 class="mv-squiggle-underline" id="h-annotated-code">Annotated code</h2>
+    <p class="sg-classes"><code>.mv-annotated-code</code> <code>__code</code> <code>__mark</code> (<code>--active</code>) <code>__mark-num</code> <code>__legend</code> <code>__legend-item</code> <code>__legend-num</code>. Hover or focus a legend item to activate its mark.</p>
+    <div class="sg-demo">
+      <figure class="mv-annotated-code" id="sg-annotated">
+        <pre class="mv-annotated-code__code"><code><span class="mv-annotated-code__mark" id="sg-mark-1" aria-describedby="sg-leg-1"><span class="tk-query">where</span><span class="mv-annotated-code__mark-num" aria-hidden="true">1</span></span><span class="tk-punct">(</span><span class="mv-annotated-code__mark" id="sg-mark-2" aria-describedby="sg-leg-2"><span class="tk-field">customer</span><span class="tk-punct">.</span><span class="tk-pred">eq</span><span class="tk-punct">(</span><span class="tk-num">42</span><span class="tk-punct">)</span><span class="mv-annotated-code__mark-num" aria-hidden="true">2</span></span><span class="tk-punct">).</span><span class="mv-annotated-code__mark" id="sg-mark-3" aria-describedby="sg-leg-3"><span class="tk-term">count</span><span class="tk-punct">()</span><span class="mv-annotated-code__mark-num" aria-hidden="true">3</span></span><span class="tk-punct">;</span></code></pre>
+        <figcaption>
+          <ol class="mv-annotated-code__legend">
+            <li class="mv-annotated-code__legend-item" id="sg-leg-1" tabindex="0" data-mark="sg-mark-1"><span class="mv-annotated-code__legend-num">1</span><span><code>where</code> starts a query on the table.</span></li>
+            <li class="mv-annotated-code__legend-item" id="sg-leg-2" tabindex="0" data-mark="sg-mark-2"><span class="mv-annotated-code__legend-num">2</span><span><code>customer.eq(42)</code> keeps the rows where the field equals 42.</span></li>
+            <li class="mv-annotated-code__legend-item" id="sg-leg-3" tabindex="0" data-mark="sg-mark-3"><span class="mv-annotated-code__legend-num">3</span><span><code>count()</code> ends the query and returns how many rows are left.</span></li>
+          </ol>
+        </figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <section class="sg-section" id="stepper" aria-labelledby="h-stepper">
+    <h2 class="mv-squiggle-underline" id="h-stepper">Stepper</h2>
+    <p class="sg-classes"><code>.mv-stepper</code> <code>__list</code> <code>__item</code> (<code>--done</code>) <code>__link</code> (<code>[aria-current="step"]</code>) <code>__dot</code> <code>__num</code> <code>__check</code> <code>__title</code>. Connectors are squiggles (green after a done step). Compact: <code>.mv-stepper--compact</code> <code>__count</code> <code>__current-title</code> <code>__tools</code> <code>__progress</code> <code>__progress-fill</code> (sets <code>--_n</code> and <code>--_total</code>).</p>
+    <p class="sg-label">Wide, ten steps: step 1, step 5 and step 10 (upcoming = plain blob dot, current = teal face, done = sun face)</p>
+    <div class="sg-demo sg-stepper-demos" data-sg-steppers></div>
+    <p class="sg-label">Compact (below 960 px)</p>
+    <div class="sg-demo sg-narrow">
+      <nav class="mv-stepper mv-stepper--compact" aria-label="Lesson steps (compact)">
+        <span class="mv-stepper__count">Step 3 of 9</span>
+        <span class="mv-stepper__current-title">Build an index by asking</span>
+        <div class="mv-stepper__tools">
+          <button class="mv-button mv-button--ghost mv-button--icon" type="button" aria-label="Previous step"><span data-icon="chevron" data-size="18" data-class="mv-icon--flip"></span></button>
+          <button class="mv-button mv-button--ghost mv-button--icon" type="button" aria-label="Next step"><span data-icon="chevron" data-size="18"></span></button>
+        </div>
+        <div class="mv-stepper__progress" role="progressbar" aria-valuemin="1" aria-valuemax="9" aria-valuenow="3" aria-valuetext="Step 3 of 9: Build an index by asking"><span class="mv-stepper__progress-fill" id="sg-progress-fill"></span></div>
+      </nav>
+    </div>
+  </section>
+
+  <section class="sg-section" id="stat" aria-labelledby="h-stat">
+    <h2 class="mv-squiggle-underline" id="h-stat">Stat</h2>
+    <p class="sg-classes"><code>.mv-stat-row</code> &gt; <code>.mv-stat</code> (<code>--series-1|2|3</code>, <code>--below-res</code>) <code>__label</code> <code>__value</code> <code>__unit</code> <code>__comparison</code>. The marker is a shape, not only a colour; the number is never coloured.</p>
+    <div class="sg-demo">
+      <div class="mv-stat-row">
+        <div class="mv-stat" role="group" aria-labelledby="sg-stat-1"><div class="mv-stat__label" id="sg-stat-1">Plain stat</div><div class="mv-stat__value">412<span class="mv-stat__unit">&#8239;µs</span></div><div class="mv-stat__comparison">38× faster than reading every row</div></div>
+        <div class="mv-stat mv-stat--series-1" role="group" aria-labelledby="sg-stat-2"><div class="mv-stat__label" id="sg-stat-2">multiview</div><div class="mv-stat__value">11<span class="mv-stat__unit">&#8239;µs</span></div><div class="mv-stat__comparison">index probe</div></div>
+        <div class="mv-stat mv-stat--series-2" role="group" aria-labelledby="sg-stat-3"><div class="mv-stat__label" id="sg-stat-3">Scan only</div><div class="mv-stat__value">412<span class="mv-stat__unit">&#8239;µs</span></div><div class="mv-stat__comparison">every row read</div></div>
+        <div class="mv-stat mv-stat--series-3" role="group" aria-labelledby="sg-stat-4"><div class="mv-stat__label" id="sg-stat-4">Grouped only</div><div class="mv-stat__value">38<span class="mv-stat__unit">&#8239;µs</span></div><div class="mv-stat__comparison">hash probe</div></div>
+      </div>
+      <div class="mv-stat-row sg-gap-top">
+        <div class="mv-stat mv-stat--series-1 mv-stat--below-res" role="group" aria-labelledby="sg-stat-5"><div class="mv-stat__label" id="sg-stat-5">multiview, below res</div><div class="mv-stat__value">&lt; 1<span class="mv-stat__unit">&#8239;µs</span></div><div class="mv-stat__comparison">below the clock resolution</div></div>
+        <div class="mv-stat mv-stat--series-2 mv-stat--below-res" role="group" aria-labelledby="sg-stat-6"><div class="mv-stat__label" id="sg-stat-6">Square, below res</div><div class="mv-stat__value">&lt; 5<span class="mv-stat__unit">&#8239;µs</span></div><div class="mv-stat__comparison">below the clock resolution</div></div>
+        <div class="mv-stat mv-stat--series-3 mv-stat--below-res" role="group" aria-labelledby="sg-stat-7"><div class="mv-stat__label" id="sg-stat-7">Triangle, below res</div><div class="mv-stat__value">&lt; 5<span class="mv-stat__unit">&#8239;µs</span></div><div class="mv-stat__comparison">below the clock resolution</div></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sg-section" id="chip" aria-labelledby="h-chip">
+    <h2 class="mv-squiggle-underline" id="h-chip">Chip</h2>
+    <p class="sg-classes"><code>.mv-chip</code> <code>__icon</code> <code>__dot</code> <code>__label</code>; modifiers <code>--code</code> <code>--insight</code> <code>--success</code> <code>--warning</code> <code>--series-1|2|3</code> <code>--interactive</code>; kind colours for code chips <code>--tk-field|pred|query|term|write|help|kw</code>.</p>
+    <div class="sg-demo sg-row">
+      <span class="mv-chip"><span class="mv-chip__label">neutral</span></span>
+      <span class="mv-chip mv-chip--code"><span class="mv-chip__label">customer.eq(42)</span></span>
+      <span class="mv-chip mv-chip--insight"><span class="mv-chip__dot"></span><span class="mv-chip__label">insight</span></span>
+      <span class="mv-chip mv-chip--success"><span data-icon="index" data-size="14" class="mv-chip__icon"></span><span class="mv-chip__label">index built</span></span>
+      <span class="mv-chip mv-chip--warning"><span data-icon="cross" data-size="14" class="mv-chip__icon"></span><span class="mv-chip__label">dropped</span></span>
+      <span class="mv-chip mv-chip--series-1"><span class="mv-chip__label">multiview</span></span>
+      <span class="mv-chip mv-chip--series-2"><span class="mv-chip__label">scan only</span></span>
+      <span class="mv-chip mv-chip--series-3"><span class="mv-chip__label">grouped only</span></span>
+    </div>
+    <p class="sg-label">Code chips by kind</p>
+    <div class="sg-demo sg-row">
+      <span class="mv-chip mv-chip--code mv-chip--tk-field">customer</span>
+      <span class="mv-chip mv-chip--code mv-chip--tk-pred">eq</span>
+      <span class="mv-chip mv-chip--code mv-chip--tk-query">where</span>
+      <span class="mv-chip mv-chip--code mv-chip--tk-term">count</span>
+      <span class="mv-chip mv-chip--code mv-chip--tk-write">update</span>
+      <span class="mv-chip mv-chip--code mv-chip--tk-help">zipf</span>
+      <span class="mv-chip mv-chip--code mv-chip--tk-kw">const</span>
+    </div>
+    <p class="sg-label">Interactive: default, selected (<code>aria-pressed="true"</code>), disabled</p>
+    <div class="sg-demo sg-row">
+      <button class="mv-chip mv-chip--interactive" type="button" aria-pressed="false">default</button>
+      <button class="mv-chip mv-chip--interactive" type="button" aria-pressed="true">selected</button>
+      <button class="mv-chip mv-chip--interactive" type="button" disabled>disabled</button>
+    </div>
+  </section>
+
+  <section class="sg-section" id="segmented" aria-labelledby="h-segmented">
+    <h2 class="mv-squiggle-underline" id="h-segmented">Segmented</h2>
+    <p class="sg-classes"><code>.mv-segmented</code> &gt; <code>.mv-segmented__option</code>; selected is <code>[aria-pressed="true"]</code> (group) or <code>[aria-selected="true"]</code> (tablist).</p>
+    <div class="sg-demo sg-row">
+      <div class="mv-segmented" role="group" aria-label="Mode" data-sg-pressed>
+        <button class="mv-segmented__option" type="button" aria-pressed="true">Lessons</button>
+        <button class="mv-segmented__option" type="button" aria-pressed="false">Free play</button>
+      </div>
+      <div class="mv-segmented" role="tablist" aria-label="View" data-sg-tabs>
+        <button class="mv-segmented__option" type="button" role="tab" aria-selected="true">DSL</button>
+        <button class="mv-segmented__option" type="button" role="tab" aria-selected="false" tabindex="-1">C++</button>
+        <button class="mv-segmented__option" type="button" role="tab" aria-selected="false" tabindex="-1">Plan</button>
+      </div>
+      <div class="mv-segmented" role="group" aria-label="With a disabled option">
+        <button class="mv-segmented__option" type="button" aria-pressed="true">One</button>
+        <button class="mv-segmented__option" type="button" aria-pressed="false">Two</button>
+        <button class="mv-segmented__option" type="button" aria-pressed="false" disabled>Three</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="sg-section" id="bar-chart" aria-labelledby="h-bar-chart">
+    <h2 class="mv-squiggle-underline" id="h-bar-chart">Bar chart</h2>
+    <p class="sg-classes"><code>.mv-bar-chart</code> (<code>--rows</code>, <code>--columns</code>) <code>__title</code> <code>__plot</code> <code>__desc</code> <code>__table</code> <code>__caption</code>; SVG: <code>__axis</code> <code>__grid</code> <code>__tick-label</code> <code>__category</code> <code>__bar</code> (<code>--s1|s2|s3</code>, <code>--below-res</code>) <code>__marker</code> (<code>--s1|s2|s3</code>, <code>--below-res</code>) <code>__value</code> (<code>--below-res</code>, <code>--inside</code>) <code>__annotation</code> <code>__annotation-line</code> <code>__annotation-icon--built|dropped</code> <code>__hatch-bg</code> <code>__hatch-line--s1|s2|s3</code>. The hatched, dashed bar is below the clock resolution (here 100 µs).</p>
+    <div class="sg-demo" id="sg-chart-rows"></div>
+    <div class="sg-demo sg-gap-top" id="sg-chart-columns"></div>
+  </section>
+
+  <section class="sg-section" id="drawer" aria-labelledby="h-drawer">
+    <h2 class="mv-squiggle-underline" id="h-drawer">Drawer</h2>
+    <p class="sg-classes"><code>.mv-drawer</code> (<code>details</code>) <code>__summary</code> <code>__chevron</code> <code>__title</code> <code>__meta</code> <code>__body</code>.</p>
+    <div class="sg-demo">
+      <details class="mv-drawer">
+        <summary class="mv-drawer__summary"><span data-icon="chevron" data-size="16" class="mv-drawer__chevron"></span><span class="mv-drawer__title">The same query in C++</span><span class="mv-drawer__meta">12 lines</span></summary>
+        <div class="mv-drawer__body"><p>The C++ view shows the call that the script makes on the container.</p></div>
+      </details>
+      <details class="mv-drawer" open>
+        <summary class="mv-drawer__summary"><span data-icon="chevron" data-size="16" class="mv-drawer__chevron"></span><span class="mv-drawer__title">All indexes (open)</span><span class="mv-drawer__meta">2 indexes</span></summary>
+        <div class="mv-drawer__body"><p>grouped on customer, ordered on day.</p></div>
+      </details>
+    </div>
+  </section>
+
+  <section class="sg-section" id="tooltip" aria-labelledby="h-tooltip">
+    <h2 class="mv-squiggle-underline" id="h-tooltip">Tooltip</h2>
+    <p class="sg-classes"><code>.mv-tooltip</code> (<code>role="tooltip"</code>). Positioned by script: shows after 400 ms of hover, at once on keyboard focus, hides on leave, blur and Escape.</p>
+    <div class="sg-demo sg-row">
+      <button class="mv-button mv-button--secondary" type="button" data-tooltip="Loading the engine" aria-describedby="sg-tip-live">Hover or focus me</button>
+      <div class="sg-tip-static"><span class="mv-tooltip" role="tooltip">queries 201 to 400: 0.05 µs each (adaptive)</span></div>
+    </div>
+  </section>
+
+  <section class="sg-section" id="lesson-step" aria-labelledby="h-lesson-step">
+    <h2 class="mv-squiggle-underline" id="h-lesson-step">Lesson step (text column)</h2>
+    <p class="sg-classes"><code>.mv-lesson-step__intro</code> (<code>__overline</code> <code>__heading</code> <code>__goal</code> <code>__body</code>) <code>.mv-lesson-step__tasks</code> (<code>__try</code> <code>__try-heading</code> <code>__try-list</code> <code>__try-item</code> (<code>--done</code>) <code>__try-num</code> <code>__nav</code>). Page shell: <code>.mv-page</code> <code>.mv-topbar</code> <code>.mv-lesson-layout</code> <code>.mv-workbench</code> <code>.mv-skip-link</code>.</p>
+    <div class="sg-demo sg-column-demo">
+      <div class="mv-lesson-step__intro">
+        <div class="mv-lesson-step__overline">Step 3 of 9</div>
+        <h1 class="mv-lesson-step__heading" tabindex="-1">The container builds an index</h1>
+        <p class="mv-lesson-step__goal">Run the same query twice and see what changes.</p>
+        <div class="mv-lesson-step__body">
+          <p>A <strong>scan</strong> reads every row. After enough scans the container builds an index on the field you ask about. Read <a href="#run-log">the run log</a> after each run.</p>
+          <p>The second query uses <code>customer.eq(42)</code>, so the plan line names the <code>customer</code> index.</p>
+        </div>
+      </div>
+      <div class="mv-lesson-step__tasks">
+        <section class="mv-lesson-step__try" aria-labelledby="sg-try-h">
+          <h2 class="mv-lesson-step__try-heading" id="sg-try-h">Try this</h2>
+          <ol class="mv-lesson-step__try-list">
+            <li class="mv-lesson-step__try-item mv-lesson-step__try-item--done"><span class="mv-lesson-step__try-num"><span data-icon="check" data-size="16"></span></span><span>Press Run once.<span class="mv-visually-hidden"> done</span></span></li>
+            <li class="mv-lesson-step__try-item"><span class="mv-lesson-step__try-num">2</span><span>Change <code>42</code> to <code>7</code> and press Run again.</span></li>
+            <li class="mv-lesson-step__try-item"><span class="mv-lesson-step__try-num">3</span><span>Find the line that says <code>built</code> in the run log.</span></li>
+          </ol>
+        </section>
+        <nav class="mv-lesson-step__nav" aria-label="Step navigation">
+          <button class="mv-button mv-button--ghost mv-lesson-step__nav-prev" type="button"><span data-icon="chevron" data-size="16" data-class="mv-icon--flip"></span>Previous</button>
+          <button class="mv-button mv-button--secondary mv-lesson-step__nav-next" type="button">Next step<span data-icon="chevron" data-size="16"></span></button>
+        </nav>
+      </div>
+    </div>
+  </section>
+
+  <section class="sg-section" id="handmade" aria-labelledby="h-handmade">
+    <h2 class="mv-squiggle-underline" id="h-handmade">Handmade layer</h2>
+    <p class="sg-note">Spec section 12. Decoration lives at the edges: headings, the stepper, empty states, the footer and the step-complete moment. It never sits behind or inside code, run-log lines, chart marks or text a reader must parse.</p>
+
+    <h3 class="sg-group-title">Graph paper</h3>
+    <p class="sg-classes"><code>.mv-paper</code> on <code>body</code> or <code>.mv-page</code> only. The grid stops at the edge of every card, because a card has a solid background.</p>
+    <div class="sg-demo sg-paper-demo mv-paper">
+      <div class="sg-paper-card"><span class="mv-text-label">A card with <code>--color-surface</code>: no grid inside.</span></div>
+      <span class="mv-text-small">Text on the paper keeps AA contrast where two rules cross.</span>
+    </div>
+
+    <h3 class="sg-group-title">Wobbly radii</h3>
+    <p class="sg-classes"><code>--radius-wobble-sm</code> chips and the run button; <code>-md</code> segmented track and step-complete action; <code>-lg</code> callouts, syntax-card, step-complete, empty state; <code>-blob</code> stepper dots and try-this numbers.</p>
+    <div class="sg-demo sg-radii-demo" id="sg-wobble"></div>
+
+    <h3 class="sg-group-title">Crayon shadow</h3>
+    <p class="sg-classes"><code>--shadow-crayon</code> on the run button only. Pressed: <code>--shadow-crayon-pressed</code> and a move of <code>--crayon-press</code>, with no transition.</p>
+    <div class="sg-demo sg-row">
+      <div class="sg-state"><button class="mv-run-button" type="button"><span data-icon="play" data-size="16" class="mv-run-button__icon"></span><span class="mv-run-button__label">Run</span></button><span class="sg-state-name">rest</span></div>
+      <div class="sg-state"><button class="mv-run-button sg-pressed" type="button"><span data-icon="play" data-size="16" class="mv-run-button__icon"></span><span class="mv-run-button__label">Run</span></button><span class="sg-state-name">pressed (forced for display)</span></div>
+    </div>
+
+    <h3 class="sg-group-title">Squiggles</h3>
+    <p class="sg-classes"><code>.mv-squiggle-underline</code> (<code>--sun</code> <code>--leaf</code> <code>--periwinkle</code>) under display titles; <code>.mv-squiggle-divider</code> (an <code>hr</code>); <code>.mv-squiggle-band</code> (an empty, <code>aria-hidden</code> strip, never behind text). The lesson heading and the page footer apply the same rules.</p>
+    <div class="sg-demo sg-squiggles">
+      <p class="mv-text-display mv-squiggle-underline">Coral underline</p>
+      <p class="mv-text-display mv-squiggle-underline mv-squiggle-underline--sun">Sun underline</p>
+      <p class="mv-text-display mv-squiggle-underline mv-squiggle-underline--leaf">Leaf underline</p>
+      <p class="mv-text-display mv-squiggle-underline mv-squiggle-underline--periwinkle">Periwinkle underline</p>
+      <hr class="mv-squiggle-divider">
+      <div class="mv-squiggle-band" aria-hidden="true"></div>
+    </div>
+
+    <h3 class="sg-group-title">Mascots</h3>
+    <p class="sg-classes"><code>.mv-mascot</code> (<code>--sm</code> 28 <code>--lg</code> 72, default 48) <code>--teal</code> <code>--sun</code> <code>--sleepy</code> <code>--coral</code> <code>--wiggle</code>. Always <code>aria-hidden</code>; the meaning is also in text. Outside the stepper, at most one is visible per screen.</p>
+    <div class="sg-demo sg-mascots">
+      <div class="sg-mascot-card"><span class="mv-mascot mv-mascot--sm mv-mascot--teal" aria-hidden="true"></span><b>teal</b><span>current step dot in the stepper, 28 px</span></div>
+      <div class="sg-mascot-card"><span class="mv-mascot mv-mascot--sm mv-mascot--sun" aria-hidden="true"></span><b>sun</b><span>done step dots in the stepper, 28 px</span></div>
+      <div class="sg-mascot-card"><span class="mv-mascot mv-mascot--sleepy" aria-hidden="true"></span><b>sleepy</b><span>run-log empty state, 48 px</span></div>
+      <div class="sg-mascot-card"><span class="mv-mascot mv-mascot--lg mv-mascot--coral" aria-hidden="true"></span><b>coral</b><span>step-complete moment, 72 px</span></div>
+    </div>
+
+    <h3 class="sg-group-title">Run-log empty state</h3>
+    <div class="sg-demo">
+      <section class="mv-run-log" aria-label="Run log, empty (handmade)">
+        <div class="mv-run-log__header"><h2 class="mv-run-log__title">Run log</h2><span class="mv-run-log__count">0 runs</span></div>
+        <div class="mv-run-log__body"><div class="mv-run-log__empty"><span class="mv-mascot mv-mascot--sleepy" aria-hidden="true"></span><div class="mv-run-log__empty-text"><div class="mv-run-log__empty-title">Nothing ran yet</div><p>Press Run (Ctrl ↵). Output appears here.</p></div></div></div>
+      </section>
+    </div>
+
+    <h3 class="sg-group-title">Step complete</h3>
+    <p class="sg-classes"><code>.mv-step-complete</code> <code>__mascot</code> <code>__title</code> <code>__text</code> <code>__action</code>. Once per screen; the coral face wiggles once, and only when the reader has not asked for reduced motion.</p>
+    <div class="sg-demo sg-column-demo">
+      <section class="mv-step-complete" role="status">
+        <span class="mv-step-complete__mascot mv-mascot mv-mascot--coral mv-mascot--lg mv-mascot--wiggle" aria-hidden="true"></span>
+        <h3 class="mv-step-complete__title">Step 3 done</h3>
+        <p class="mv-step-complete__text">The second query used the index that the first runs built.</p>
+        <button class="mv-step-complete__action mv-button mv-button--secondary" type="button">Next step<span data-icon="chevron" data-size="16"></span></button>
+      </section>
+      <hr class="mv-squiggle-divider">
+    </div>
+
+    <h3 class="sg-group-title">Display font specimen</h3>
+    <p class="sg-classes">Shantell Sans 700 in exactly these places: the lesson heading (<code>display</code>), the stat number, the stepper's current-step title (<code>hand-sm</code>), "Try this", the step-complete title and the run-log empty-state title (<code>hand</code>). Never in code, the log, the chart or body text.</p>
+    <div class="sg-demo sg-specimen">
+      <p class="mv-text-display">The container builds an index 0123456789</p>
+      <p class="mv-text-hand">Try this · Step 3 done · Nothing ran yet</p>
+      <p class="mv-text-hand-sm">Build an index by asking</p>
+      <p class="mv-text-stat">412&#8239;µs 38× &lt; 5</p>
+      <p class="mv-text-body">Body text stays in Nunito: abcdefghijklmnopqrstuvwxyz åäö</p>
+    </div>
+
+    <h3 class="sg-group-title">Do and don't</h3>
+    <div class="sg-demo sg-pair">
+      <div>
+        <p><span class="mv-chip mv-chip--success"><span data-icon="check" data-size="14" class="mv-chip__icon"></span><span class="mv-chip__label">Do</span></span></p>
+        <p class="sg-note">Plain log lines on the inset surface. The mascot and the hand title belong to the empty state only.</p>
+        <section class="mv-run-log" aria-label="Do: plain run log">
+          <div class="mv-run-log__body">
+            <div class="mv-run-log__run">
+              <div class="mv-run-log__line mv-run-log__line--value"><span class="mv-run-log__num">1</span><span data-icon="chevron" data-size="16" class="mv-run-log__icon"></span><span class="mv-run-log__text">count = <span class="mv-run-log__figure">18</span></span></div>
+              <div class="mv-run-log__line mv-run-log__line--timing"><span class="mv-run-log__num">2</span><span data-icon="clock" data-size="16" class="mv-run-log__icon"></span><span class="mv-run-log__text"><span class="mv-run-log__figure">412&#8239;µs</span>  where(customer.eq(42)).count()</span></div>
+            </div>
+          </div>
+        </section>
+      </div>
+      <div>
+        <p><span class="mv-chip mv-chip--warning"><span data-icon="cross" data-size="14" class="mv-chip__icon"></span><span class="mv-chip__label">Don't</span></span></p>
+        <p class="sg-note">Paper, a mascot, a squiggle and the display face inside the log. This breaks the restraint rule (12.2). Shown only as the forbidden case.</p>
+        <section class="sg-dont mv-paper" aria-label="Don't: decorated run log">
+          <div class="mv-run-log__line mv-run-log__line--value"><span class="mv-run-log__num">1</span><span class="mv-mascot mv-mascot--sm mv-mascot--sun" aria-hidden="true"></span><span class="mv-run-log__text sg-dont-hand">count = 18</span></div>
+          <hr class="mv-squiggle-divider">
+          <div class="mv-run-log__line mv-run-log__line--timing"><span class="mv-run-log__num">2</span><span data-icon="clock" data-size="16" class="mv-run-log__icon"></span><span class="mv-run-log__text">412&#8239;µs  where(customer.eq(42)).count()</span></div>
+        </section>
+      </div>
+    </div>
+  </section>
+
+  <section class="sg-section" id="both-themes" aria-labelledby="h-both-themes">
+    <h2 class="mv-squiggle-underline" id="h-both-themes">Light and dark side by side</h2>
+    <p class="sg-note">Two frames of this page in embed mode, one forced light and one forced dark, showing the changed components together.</p>
+    <div class="sg-demo sg-pair sg-frames" id="sg-frames"></div>
+  </section>
+
+  <footer class="mv-page__footer"><div class="mv-squiggle-divider" role="presentation"></div>The values come from <code>css/tokens.css</code>. Change a token and reload.</footer>
+</main>
+
+<div class="sg-kit mv-page" id="sg-kit">
+  <h1 class="mv-lesson-step__heading">The container builds an index</h1>
+  <p class="mv-lesson-step__goal">Run the same query twice.</p>
+  <div class="sg-kit-row">
+    <button class="mv-run-button" type="button"><span data-icon="play" data-size="16" class="mv-run-button__icon"></span><span class="mv-run-button__label">Run</span></button>
+    <button class="mv-button mv-button--secondary" type="button">Next step</button>
+    <span class="mv-chip mv-chip--success"><span class="mv-chip__label">index built</span></span>
+    <span class="mv-chip mv-chip--code mv-chip--tk-field">customer</span>
+    <div class="mv-segmented" role="group" aria-label="Mode"><button class="mv-segmented__option" type="button" aria-pressed="true">Lessons</button><button class="mv-segmented__option" type="button" aria-pressed="false">Free play</button></div>
+  </div>
+  <nav class="mv-stepper" aria-label="Lesson steps (kit)"><ol class="mv-stepper__list" data-sg-stepper="5"></ol></nav>
+  <aside class="mv-callout mv-callout--insight" role="note"><span data-icon="info" data-size="20" class="mv-callout__icon"></span><h3 class="mv-callout__title">Insight: the index paid off</h3><div class="mv-callout__body"><p>Later queries read one group, not every row.</p></div></aside>
+  <aside class="mv-callout mv-callout--warning" role="note"><span data-icon="warning" data-size="20" class="mv-callout__icon"></span><h3 class="mv-callout__title">Careful: below the clock resolution</h3><div class="mv-callout__body"><p>Run more queries.</p></div></aside>
+  <section class="mv-run-log" aria-label="Run log, empty (kit)"><div class="mv-run-log__body"><div class="mv-run-log__empty"><span class="mv-mascot mv-mascot--sleepy" aria-hidden="true"></span><div class="mv-run-log__empty-text"><div class="mv-run-log__empty-title">Nothing ran yet</div><p>Press Run. Output appears here.</p></div></div></div></section>
+  <section class="mv-step-complete" role="status"><span class="mv-step-complete__mascot mv-mascot mv-mascot--coral mv-mascot--lg" aria-hidden="true"></span><h3 class="mv-step-complete__title">Step 3 done</h3><p class="mv-step-complete__text">The second query used the index.</p></section>
+  <div class="mv-stat-row"><div class="mv-stat mv-stat--series-1" role="group" aria-labelledby="sg-kit-stat"><div class="mv-stat__label" id="sg-kit-stat">multiview</div><div class="mv-stat__value">11<span class="mv-stat__unit">&#8239;µs</span></div></div></div>
+</div>
+</body>
+</html>

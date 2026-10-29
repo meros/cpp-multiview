@@ -1,77 +1,547 @@
-/* Every design token of the playground (spec section 8): colours, spacing, type, radii, motion. */
+/* Design tokens of the multiview playground. The spec is docs/design-system.md.
+   Values only: no component CSS here. Theme-dependent roles appear in three blocks with identical
+   keys (light :root, dark by system preference, dark by data-theme). Everything else is in :root once.
+   Aliases at the end (--ink, --panel, ...) exist because css/editor.css reads those names.
+   Palette: the mood-board re-tune (design-system.md section 12): cream paper, warm brown-green ink,
+   periwinkle accent, earthy status colours; dark is "night forest". */
+
+/* ---- self-hosted fonts (design-system.md 3.1 and 12.6). Files in playground/web/fonts/, Latin subset.
+   Until the files exist the stacks fall back to the system faces; nothing else changes. ---- */
+@font-face {
+  font-family: "Shantell Sans";
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url("../fonts/shantell-sans-700-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: "Nunito";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("../fonts/nunito-400-700-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
 :root {
   color-scheme: light;
 
-  --s-1: 4px; --s-2: 8px; --s-3: 12px; --s-4: 16px; --s-5: 24px; --s-6: 32px; --s-7: 48px;
-  --r-panel: 10px; --r-ctl: 7px; --r-badge: 999px; --r-card: 8px;
+  /* ---- palette: neutral ramp (cream paper and brown-green ink, light theme) ---- */
+  --neutral-0: #fffcf5;
+  --neutral-25: #fdf8ee;
+  --neutral-50: #f7f0e1;
+  --neutral-100: #efe6d2;
+  --neutral-200: #e0d4ba;
+  --neutral-300: #cbbd9e;
+  --neutral-400: #a89b7d;
+  --neutral-500: #877d63;
+  --neutral-600: #5f5a45;
+  --neutral-700: #47432f;
+  --neutral-800: #34322a;
+  --neutral-900: #2a2b1f;
+  --neutral-950: #1b1d15;
 
-  --sans: system-ui, -apple-system, "Segoe UI", sans-serif;
-  --mono: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace;
-  --t-xs: 12px; --lh-xs: 16px;
-  --t-sm: 13px; --lh-sm: 20px;
-  --t-md: 15px; --lh-md: 24px;
-  --t-lg: 18px; --lh-lg: 26px;
-  --t-xl: 24px; --lh-xl: 32px;
+  /* ---- palette: night ramp (night forest, dark theme) ---- */
+  --night-950: #121611;
+  --night-900: #161b15;
+  --night-850: #1a2019;
+  --night-800: #222920;
+  --night-750: #283026;
+  --night-700: #323b30;
+  --night-600: #435040;
+  --night-500: #6f7a67;
+  --night-400: #9aa18e;
+  --night-300: #aab19c;
+  --night-200: #d0d3c1;
+  --night-100: #eeeadb;
 
-  --ease: cubic-bezier(0.2, 0, 0, 1);
+  /* ---- palette: brand ramp (periwinkle indigo) ---- */
+  --brand-50: #eceefb;
+  --brand-100: #dde0f8;
+  --brand-200: #c3c9f2;
+  --brand-300: #a3adf0;
+  --brand-400: #8590e4;
+  --brand-500: #6871d4;
+  --brand-600: #4b53b8;
+  --brand-700: #3d4399;
+  --brand-800: #2f3478;
+  --brand-900: #1f2340;
 
-  --bg: #fbfbf9; --panel: #ffffff; --panel-2: #f5f5f1;
-  --ink: #1c1d1f; --muted: #5d6168; --line: #e3e3de;
-  --grid: #ecece7; --grid-strong: #d5d5cf;
-  --accent: #0063a8; --on-accent: #ffffff; --focus: #0063a8;
-  --good: #1f7a45; --bad: #b3261e; --warn: #8a6200;
-  --event-build: #1f7a45; --event-drop: #b3261e; --event-trial: #6b4fbb;
-  --cue-bg: #fff4c2; --cue-ink: #3a2e00; --highlight: #e0a800;
+  /* ---- semantic roles: surfaces ---- */
+  --color-bg: #f7f0e1;               /* neutral-50: the page (cream paper) */
+  --color-surface: #fffcf5;          /* neutral-0: the code-editor card (lightest paper) */
+  --color-surface-inset: #fdf8ee;    /* neutral-25: code area, run log */
+  --color-surface-sunken: #efe6d2;   /* neutral-100: segmented track, chips */
+  --color-surface-raised: #fffcf5;   /* popovers */
+  --color-surface-selected: #fffcf5; /* selected segmented option */
 
-  --copy-0: #007a5a; --copy-1: #c84f00; --copy-2: #0063a8;
-  --copy-3: #b0538f; --copy-4: #9a6b00; --copy-5: #3a3f8f;
+  /* ---- semantic roles: text and lines ---- */
+  --color-text: #2a2b1f;             /* neutral-900 */
+  --color-text-secondary: #47432f;   /* neutral-700 */
+  --color-text-muted: #5f5a45;       /* neutral-600 */
+  --color-faint: #877d63;            /* neutral-500: non-text only (icons, decoration) */
+  --color-border: #e0d4ba;           /* neutral-200 */
+  --color-border-strong: #877d63;    /* neutral-500: input borders, 3:1 */
+  --color-grid: #efe6d2;             /* neutral-100 */
+  --color-grid-strong: #cbbd9e;      /* neutral-300 */
 
-  --tk-com: #6e7781; --tk-str: #0a6b36; --tk-num: #9a4a00; --tk-kw: #8b1fa8;
-  --tk-field: #0063a8; --tk-pred: #007a5a; --tk-query: #1c1d1f; --tk-term: #b3261e;
-  --tk-write: #c84f00; --tk-help: #5d6168;
+  /* ---- semantic roles: interactive ---- */
+  --color-accent: #4b53b8;           /* brand-600 */
+  --color-accent-hover: #3d4399;     /* brand-700 */
+  --color-accent-active: #2f3478;    /* brand-800 */
+  --color-on-accent: #ffffff;
+  --color-accent-subtle: #eceefb;    /* brand-50 */
+  --color-accent-border: #c3c9f2;    /* brand-200 */
+  --color-focus: #4b53b8;            /* brand-600 */
+
+  /* ---- semantic roles: status ---- */
+  --color-insight: #4b53b8;          /* periwinkle */
+  --color-insight-bg: #eceefb;
+  --color-insight-border: #c3c9f2;
+  --color-tip: #3e6a5c;              /* sage (blue-green) */
+  --color-tip-bg: #e7f0e6;
+  --color-tip-border: #b3cfb8;
+  --color-warning: #7d5a00;          /* mustard */
+  --color-warning-bg: #f9eecb;
+  --color-warning-border: #e2c46e;
+  --color-error: #ac3f26;            /* terracotta */
+  --color-error-bg: #fbe8df;
+  --color-error-border: #eeb6a2;
+  --color-success: #3b6d2c;          /* leaf (yellow-green) */
+  --color-success-bg: #eaf1dc;
+  --color-success-border: #bad19e;
+  --color-highlight: #f0c13a;        /* editor line bar and 22 % tint; decorative */
+  --color-highlight-bg: #faecbd;     /* a cue in prose */
+
+  /* ---- semantic roles: tooltip ---- */
+  --color-tooltip-bg: #34322a;       /* neutral-800 */
+  --color-tooltip-text: #f7f0e1;     /* neutral-50 */
+  --color-tooltip-border: transparent;
+
+  /* ---- data: series (marker and dash are mandatory, see design-system.md 2.6) ---- */
+  --series-1: #a8472a;               /* terracotta, circle, solid */
+  --series-2: #2f7783;               /* dusty teal, square, dash 6 4 */
+  --series-3: #a87e00;               /* mustard, triangle, dash 2 3 */
+  --chart-axis: #5f5a45;
+  --chart-axis-line: #cbbd9e;
+  --chart-grid: #efe6d2;
+  --chart-annotation: #47432f;
+  --chart-hatch-bg: #fffcf5;
+
+  /* ---- elevation ---- */
+  --shadow-1: 0 1px 2px rgb(42 43 31 / 0.07), 0 2px 8px rgb(42 43 31 / 0.05);
+  --shadow-2: 0 4px 16px rgb(42 43 31 / 0.12), 0 1px 3px rgb(42 43 31 / 0.08);
+  --shadow-3: 0 16px 40px rgb(42 43 31 / 0.18), 0 2px 8px rgb(42 43 31 / 0.08);
+  --shadow-segment: 0 1px 2px rgb(42 43 31 / 0.14);
+
+  /* ---- syntax (read by css/editor.css) ---- */
+  --tk-com: #6b6754;
+  --tk-str: #456f26;
+  --tk-num: #8e5c08;
+  --tk-kw: #874a9c;
+  --tk-field: #4b53b8;
+  --tk-pred: #2d6b73;
+  --tk-query: #2a2b1f;
+  --tk-term: #ad3659;
+  --tk-write: #ab4520;
+  --tk-help: #5b5746;
+  --tk-punct: #6b6754;
+
+  /* ---- handmade layer, themed part (design-system.md section 12) ---- */
+  --paper-grid-line: rgb(150 120 70 / 0.11);   /* graph-paper rule on --color-bg */
+  --color-crayon: #2a2b1f;                     /* hard offset shadow colour */
+  --decor-coral: #e8724e;                      /* the six board colours: decoration only, never meaning */
+  --decor-sun: #f2bf2f;
+  --decor-leaf: #5f9e4f;
+  --decor-periwinkle: #7685de;
+  --decor-plum: #9a66c2;
+  --decor-blush: #ea8bb0;
+  --squiggle-pattern-opacity: 1;
+
+  /* ======== theme-independent tokens ======== */
+
+  /* ---- fonts ---- */
+  --font-sans: "Nunito", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", "Noto Sans", "Liberation Sans", Arial, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", "Cascadia Code", "Cascadia Mono", Menlo, Consolas, "DejaVu Sans Mono", "Liberation Mono", monospace;
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+
+  /* ---- type scale: size, line height, weight, tracking ---- */
+  --text-display-size: 32px;  --text-display-lh: 40px;  --text-display-weight: 700;  --text-display-tracking: 0em;
+  --text-title-size: 20px;    --text-title-lh: 28px;    --text-title-weight: 600;    --text-title-tracking: -0.01em;
+  --text-heading-size: 16px;  --text-heading-lh: 24px;  --text-heading-weight: 600;  --text-heading-tracking: 0em;
+  --text-lead-size: 18px;     --text-lead-lh: 28px;     --text-lead-weight: 400;     --text-lead-tracking: -0.005em;
+  --text-body-size: 16px;     --text-body-lh: 26px;     --text-body-weight: 400;     --text-body-tracking: 0em;
+  --text-small-size: 14px;    --text-small-lh: 22px;    --text-small-weight: 400;    --text-small-tracking: 0em;
+  --text-label-size: 13px;    --text-label-lh: 18px;    --text-label-weight: 500;    --text-label-tracking: 0.01em;
+  --text-overline-size: 12px; --text-overline-lh: 16px; --text-overline-weight: 600; --text-overline-tracking: 0.06em;
+  --text-code-size: 13px;     --text-code-lh: 20px;     --text-code-weight: 400;     --text-code-tracking: 0em;
+  --text-code-sm-size: 12px;  --text-code-sm-lh: 16px;  --text-code-sm-weight: 400;  --text-code-sm-tracking: 0em;
+  --text-stat-size: 40px;     --text-stat-lh: 44px;     --text-stat-weight: 700;     --text-stat-tracking: 0em;
+  --measure: 66ch;
+  --measure-narrow: 60ch;
+
+  /* ---- spacing (4 px base) ---- */
+  --space-0: 0px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+
+  /* ---- layout (full: 1200 px and up; media queries below change them) ---- */
+  --layout-max: 1280px;
+  --layout-gutter: 32px;
+  --layout-text-col: 400px;
+  --layout-col-gap: 48px;
+  --layout-stacked-max: 720px;
+  --topbar-h: 56px;
+
+  /* ---- radii ---- */
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-pill: 999px;
+
+  /* ---- borders ---- */
+  --border-width: 1px;
+  --border-width-strong: 2px;
+  --border: 1px solid var(--color-border);
+  --border-control: 1px solid var(--color-border-strong);
+
+  /* ---- elevation (theme-independent part) ---- */
+  --shadow-0: none;
+
+  /* ---- controls and targets ---- */
+  --control-h: 32px;
+  --run-h: 36px;
+  --target-min: 24px;
+
+  /* ---- focus ---- */
+  --focus-width: 2px;
+  --focus-offset: 2px;
+  --focus-offset-tight: 1px;
+
+  /* ---- motion ---- */
+  --dur-instant: 80ms;
+  --dur-fast: 120ms;
+  --dur-base: 200ms;
+  --dur-slow: 280ms;
+  --dur-chart: 480ms;
+  --dur-progress: 1200ms;
+  --stagger-log: 30ms;
+  --stagger-bar: 40ms;
+  --motion-distance: 4px;
+  --motion-distance-lg: 8px;
+  --ease-out: cubic-bezier(0.2, 0, 0, 1);
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-linear: linear;
+
+  /* ---- layers ---- */
+  --z-sticky: 10;
+  --z-drawer: 30;
+  --z-popover: 40;
+  --z-tooltip: 50;
+  --z-skip: 100;
+
+  /* ---- run-log line colours (resolve through the roles, so they follow the theme) ---- */
+  --log-value: var(--color-text);
+  --log-timing: var(--color-text);
+  --log-plan: var(--color-text-secondary);
+  --log-keyword: var(--color-text-muted);
+  --log-icon: var(--color-text-muted);
+  --log-icon-index: var(--color-accent);
+  --log-build: var(--color-success);
+  --log-drop: var(--color-warning);
+  --log-trial: var(--color-accent);
+
+  /* ---- aliases read by css/editor.css (do not rename; they resolve through the roles) ---- */
+  --bg: var(--color-bg);
+  --panel: var(--color-surface);
+  --panel-2: var(--color-surface-inset);
+  --ink: var(--color-text);
+  --muted: var(--color-text-muted);
+  --line: var(--color-border);
+  --grid-strong: var(--color-grid-strong);
+  --accent: var(--color-accent);
+  --focus: var(--color-focus);
+  --bad: var(--color-error);
+  --warn: var(--color-warning);
+  --good: var(--color-success);
+  --highlight: var(--color-highlight);
+  --sans: var(--font-sans);
+  --mono: var(--font-mono);
+
+  /* ======== handmade layer (design-system.md section 12): theme-independent part ======== */
+
+  /* ---- display face: step titles, stepper label, stat number, a few short labels only ---- */
+  --font-display: "Shantell Sans", ui-rounded, "Chalkboard SE", "Segoe Print", system-ui, sans-serif;
+  --text-display-font: var(--font-display);
+  --text-stat-font: var(--font-display);
+  --text-hand-size: 18px;     --text-hand-lh: 24px;     --text-hand-weight: 700;     --text-hand-tracking: 0em;     --text-hand-font: var(--font-display);
+  --text-hand-sm-size: 15px;  --text-hand-sm-lh: 20px;  --text-hand-sm-weight: 700;  --text-hand-sm-tracking: 0.005em; --text-hand-sm-font: var(--font-display);
+
+  /* ---- graph paper: page background behind the cards only, never behind code or log text ---- */
+  --paper-grid-size: 24px;
+  --paper-grid:
+    repeating-linear-gradient(0deg, var(--paper-grid-line) 0 1px, transparent 1px var(--paper-grid-size)),
+    repeating-linear-gradient(90deg, var(--paper-grid-line) 0 1px, transparent 1px var(--paper-grid-size));
+
+  /* ---- wobbly shapes: 8-value border-radius lists (horizontal / vertical radii) ---- */
+  --radius-wobble-sm: 5px 8px 6px 9px / 8px 5px 9px 6px;          /* chips, the run button, small buttons */
+  --radius-wobble-md: 8px 12px 9px 13px / 12px 8px 13px 9px;      /* segmented track, step-complete action */
+  --radius-wobble-lg: 14px 10px 16px 11px / 11px 15px 10px 14px;  /* callouts, syntax-card, step-complete, empty state */
+  --radius-wobble-blob: 52% 48% 55% 45% / 47% 55% 45% 53%;        /* stepper dots, try-this numbers */
+
+  /* ---- hand strokes and crayon shadow ---- */
+  --border-width-hand: 2px;
+  --border-hand: 2px solid var(--color-border);
+  --stroke-hand: 2px;                                       /* squiggle lines and the 24 px icons */
+  --shadow-crayon: 3px 3px 0 0 var(--color-crayon);         /* run button at rest */
+  --shadow-crayon-pressed: 1px 1px 0 0 var(--color-crayon); /* run button :active, with --crayon-press */
+  --crayon-press: 2px;                                      /* translate on :active, so the button meets its shadow */
+
+  /* ---- squiggles and mascots (url() is relative to css/, so use these only from files in css/) ---- */
+  --img-squiggle-underline: url("../img/squiggle-underline.svg");
+  --img-squiggle-divider: url("../img/squiggle-divider.svg");
+  --img-squiggle-pattern: url("../img/squiggle-pattern.svg");
+  --img-face-sun: url("../img/face-sun.svg");
+  --img-face-teal: url("../img/face-teal.svg");
+  --img-face-coral: url("../img/face-coral.svg");
+  --img-face-sleepy: url("../img/face-sleepy.svg");
+  --squiggle-underline-h: 10px;
+  --squiggle-underline-w: 9em;
+  --squiggle-divider-w: 240px;
+  --squiggle-divider-h: 24px;
+  --squiggle-band-h: 80px;
+  --squiggle-tile: 160px;
+  --mascot-sm: 28px;   /* stepper: current and done */
+  --mascot-md: 48px;   /* run-log empty state */
+  --mascot-lg: 72px;   /* step complete */
+
+  /* ---- one-shot wiggle (step complete only; zero under reduced motion) ---- */
+  --dur-wiggle: 640ms;
+  --wiggle-angle: 6deg;
 }
 
+/* ---- dark theme by system preference (same keys as the dark block below) ---- */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     color-scheme: dark;
-    --bg: #131416; --panel: #1b1c1f; --panel-2: #17181b;
-    --ink: #ecece8; --muted: #9a9ea6; --line: #2c2e33;
-    --grid: #24262a; --grid-strong: #383a40;
-    --accent: #7fb8f5; --on-accent: #0b1a2b; --focus: #7fb8f5;
-    --good: #55c785; --bad: #ff8a80; --warn: #e8c060;
-    --event-build: #55c785; --event-drop: #ff8a80; --event-trial: #b9a4f5;
-    --cue-bg: #3a3214; --cue-ink: #f5e6a8; --highlight: #f0c24a;
-    --copy-0: #2ec4a0; --copy-1: #ff8a4c; --copy-2: #5aa9f0;
-    --copy-3: #e597c8; --copy-4: #f0c24a; --copy-5: #a7adf5;
-    --tk-com: #8b949e; --tk-str: #7ee2a8; --tk-num: #ffb074; --tk-kw: #d6a2f2;
-    --tk-field: #7fb8f5; --tk-pred: #2ec4a0; --tk-query: #ecece8; --tk-term: #ff8a80;
-    --tk-write: #ff8a4c; --tk-help: #a8acb3;
+
+    --color-bg: #121611;               /* night-950 */
+    --color-surface: #1a2019;          /* night-850 */
+    --color-surface-inset: #161b15;    /* night-900 */
+    --color-surface-sunken: #222920;   /* night-800 */
+    --color-surface-raised: #222920;   /* night-800 */
+    --color-surface-selected: #323b30; /* night-700 */
+
+    --color-text: #eeeadb;             /* night-100 */
+    --color-text-secondary: #d0d3c1;   /* night-200 */
+    --color-text-muted: #aab19c;       /* night-300 */
+    --color-faint: #6f7a67;            /* night-500: non-text only */
+    --color-border: #323b30;           /* night-700 */
+    --color-border-strong: #6f7a67;    /* night-500 */
+    --color-grid: #283026;             /* night-750 */
+    --color-grid-strong: #435040;      /* night-600 */
+
+    --color-accent: #a3adf0;           /* brand-300 */
+    --color-accent-hover: #bfc6f5;
+    --color-accent-active: #cdd3f7;
+    --color-on-accent: #171a38;
+    --color-accent-subtle: #1f2340;    /* brand-900 */
+    --color-accent-border: #3d4688;
+    --color-focus: #a3adf0;
+
+    --color-insight: #a3adf0;
+    --color-insight-bg: #1f2340;
+    --color-insight-border: #3d4688;
+    --color-tip: #8fc4ad;
+    --color-tip-bg: #15261f;
+    --color-tip-border: #2d4e40;
+    --color-warning: #e6bd5c;
+    --color-warning-bg: #2b2412;
+    --color-warning-border: #5e4c1f;
+    --color-error: #f39a7e;
+    --color-error-bg: #331c15;
+    --color-error-border: #6c3524;
+    --color-success: #9ccf7f;
+    --color-success-bg: #182613;
+    --color-success-border: #36552a;
+    --color-highlight: #8f7530;
+    --color-highlight-bg: #352f15;
+
+    --color-tooltip-bg: #323b30;
+    --color-tooltip-text: #eeeadb;
+    --color-tooltip-border: #435040;
+
+    --series-1: #e0805c;
+    --series-2: #6fb8c4;
+    --series-3: #e3c25e;
+    --chart-axis: #aab19c;
+    --chart-axis-line: #435040;
+    --chart-grid: #283026;
+    --chart-annotation: #d0d3c1;
+    --chart-hatch-bg: #1a2019;
+
+    --shadow-1: none;
+    --shadow-2: 0 8px 24px rgb(0 0 0 / 0.45);
+    --shadow-3: 0 16px 48px rgb(0 0 0 / 0.55);
+    --shadow-segment: none;
+
+    --tk-com: #9aa18e;
+    --tk-str: #a8d088;
+    --tk-num: #e7be6a;
+    --tk-kw: #d4abe8;
+    --tk-field: #b0b9f5;
+    --tk-pred: #80c6cd;
+    --tk-query: #eeeadb;
+    --tk-term: #f39cb7;
+    --tk-write: #f5a27b;
+    --tk-help: #b8bba7;
+    --tk-punct: #9aa18e;
+
+    --paper-grid-line: rgb(190 210 170 / 0.06);
+    --color-crayon: #3d4688;
+    --decor-coral: #e8805e;
+    --decor-sun: #e9c04f;
+    --decor-leaf: #7fb46c;
+    --decor-periwinkle: #8f9be6;
+    --decor-plum: #b086d4;
+    --decor-blush: #e99bba;
+    --squiggle-pattern-opacity: 0.7;
   }
 }
 
+/* ---- dark theme by choice (same keys as the block above) ---- */
 :root[data-theme="dark"] {
   color-scheme: dark;
-  --bg: #131416; --panel: #1b1c1f; --panel-2: #17181b;
-  --ink: #ecece8; --muted: #9a9ea6; --line: #2c2e33;
-  --grid: #24262a; --grid-strong: #383a40;
-  --accent: #7fb8f5; --on-accent: #0b1a2b; --focus: #7fb8f5;
-  --good: #55c785; --bad: #ff8a80; --warn: #e8c060;
-  --event-build: #55c785; --event-drop: #ff8a80; --event-trial: #b9a4f5;
-  --cue-bg: #3a3214; --cue-ink: #f5e6a8; --highlight: #f0c24a;
-  --copy-0: #2ec4a0; --copy-1: #ff8a4c; --copy-2: #5aa9f0;
-  --copy-3: #e597c8; --copy-4: #f0c24a; --copy-5: #a7adf5;
-  --tk-com: #8b949e; --tk-str: #7ee2a8; --tk-num: #ffb074; --tk-kw: #d6a2f2;
-  --tk-field: #7fb8f5; --tk-pred: #2ec4a0; --tk-query: #ecece8; --tk-term: #ff8a80;
-  --tk-write: #ff8a4c; --tk-help: #a8acb3;
+
+  --color-bg: #121611;
+  --color-surface: #1a2019;
+  --color-surface-inset: #161b15;
+  --color-surface-sunken: #222920;
+  --color-surface-raised: #222920;
+  --color-surface-selected: #323b30;
+
+  --color-text: #eeeadb;
+  --color-text-secondary: #d0d3c1;
+  --color-text-muted: #aab19c;
+  --color-faint: #6f7a67;
+  --color-border: #323b30;
+  --color-border-strong: #6f7a67;
+  --color-grid: #283026;
+  --color-grid-strong: #435040;
+
+  --color-accent: #a3adf0;
+  --color-accent-hover: #bfc6f5;
+  --color-accent-active: #cdd3f7;
+  --color-on-accent: #171a38;
+  --color-accent-subtle: #1f2340;
+  --color-accent-border: #3d4688;
+  --color-focus: #a3adf0;
+
+  --color-insight: #a3adf0;
+  --color-insight-bg: #1f2340;
+  --color-insight-border: #3d4688;
+  --color-tip: #8fc4ad;
+  --color-tip-bg: #15261f;
+  --color-tip-border: #2d4e40;
+  --color-warning: #e6bd5c;
+  --color-warning-bg: #2b2412;
+  --color-warning-border: #5e4c1f;
+  --color-error: #f39a7e;
+  --color-error-bg: #331c15;
+  --color-error-border: #6c3524;
+  --color-success: #9ccf7f;
+  --color-success-bg: #182613;
+  --color-success-border: #36552a;
+  --color-highlight: #8f7530;
+  --color-highlight-bg: #352f15;
+
+  --color-tooltip-bg: #323b30;
+  --color-tooltip-text: #eeeadb;
+  --color-tooltip-border: #435040;
+
+  --series-1: #e0805c;
+  --series-2: #6fb8c4;
+  --series-3: #e3c25e;
+  --chart-axis: #aab19c;
+  --chart-axis-line: #435040;
+  --chart-grid: #283026;
+  --chart-annotation: #d0d3c1;
+  --chart-hatch-bg: #1a2019;
+
+  --shadow-1: none;
+  --shadow-2: 0 8px 24px rgb(0 0 0 / 0.45);
+  --shadow-3: 0 16px 48px rgb(0 0 0 / 0.55);
+  --shadow-segment: none;
+
+  --tk-com: #9aa18e;
+  --tk-str: #a8d088;
+  --tk-num: #e7be6a;
+  --tk-kw: #d4abe8;
+  --tk-field: #b0b9f5;
+  --tk-pred: #80c6cd;
+  --tk-query: #eeeadb;
+  --tk-term: #f39cb7;
+  --tk-write: #f5a27b;
+  --tk-help: #b8bba7;
+  --tk-punct: #9aa18e;
+
+  --paper-grid-line: rgb(190 210 170 / 0.06);
+  --color-crayon: #3d4688;
+  --decor-coral: #e8805e;
+  --decor-sun: #e9c04f;
+  --decor-leaf: #7fb46c;
+  --decor-periwinkle: #8f9be6;
+  --decor-plum: #b086d4;
+  --decor-blush: #e99bba;
+  --squiggle-pattern-opacity: 0.7;
 }
 
-/* Reduced motion: every duration is zero (spec 8.7). */
+/* ---- responsive token values ---- */
+@media (max-width: 1199px) {
+  :root { --layout-gutter: 24px; --layout-text-col: 340px; --layout-col-gap: 32px; }
+}
+@media (max-width: 959px) {
+  :root {
+    --text-display-size: 26px; --text-display-lh: 32px;
+    --text-stat-size: 32px; --text-stat-lh: 36px;
+  }
+}
+@media (max-width: 599px) {
+  :root { --layout-gutter: 16px; --topbar-h: 48px; }
+}
+@media (pointer: coarse) {
+  :root { --control-h: 44px; --run-h: 44px; }
+}
+
+/* ---- reduced motion: every duration and distance is zero (base.css adds the global guard) ---- */
 @media (prefers-reduced-motion: reduce) {
-  :root { --ease: linear; }
-  *, *::before, *::after {
-    animation-duration: 0s !important;
-    animation-delay: 0s !important;
-    transition-duration: 0s !important;
-    scroll-behavior: auto !important;
+  :root {
+    --dur-instant: 0ms;
+    --dur-fast: 0ms;
+    --dur-base: 0ms;
+    --dur-slow: 0ms;
+    --dur-chart: 0ms;
+    --dur-progress: 0ms;
+    --stagger-log: 0ms;
+    --stagger-bar: 0ms;
+    --motion-distance: 0px;
+    --motion-distance-lg: 0px;
+    --dur-wiggle: 0ms;
+    --wiggle-angle: 0deg;
   }
 }
