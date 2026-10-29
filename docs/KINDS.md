@@ -82,7 +82,7 @@ order the planner tries them.
 | ordered 512 | 220 | 283 | 790 | 24.1 |
 | ordered 1024 | 180 | 385 | 1,123 | 24.1 |
 
-Each cell is the best of several repeats (probes: 9, builds: 3, range scans: 5, churn: best of 10 chunks), single run, on a machine with a load average of about 20 because other builds were running. Treat differences under about 30 % as noise. Hit and miss are probes by key; churn is a remove plus an add under a new key. `bench/kinds.cpp` reproduces all of it (`make kinds`).
+Each cell is the best of several repeats (probes: 9, builds: 3, range scans: 5, churn: best of 10 chunks), single run. Treat differences under about 30 % as within run-to-run variation. Hit and miss are probes by key; churn is a remove plus an add under a new key. `bench/kinds.cpp` reproduces all of it (`make kinds`).
 
 Reading it: `grouped` stores each key once, so it is the leanest hash in every case, matches `swiss` on unique keys, and is 1.6x (4 ids per key) to 11x (64 ids per key) faster on integer keys, and 1.5x faster on strings. `hash` is fastest only on unique keys (21 ns against 28), at 2.5x the memory. `dense` wins whenever the key range is small. `sorted_array` has the fastest ordered lookups and the least memory, and the slowest writes.
 

@@ -5,8 +5,6 @@
 export const DEFAULT_RENT = 1e-5;
 export const ROW_CHOICES = [1000, 10000, 50000, 200000];
 export const DEFAULT_ROWS = 50000;
-export const LAB_HREF = "lab.html";
-export const LAB_TEXT = "The lab: the first playground, with every chart and setting";
 export const COMPARE_CHOICES = [
   { value: null, label: "none" },
   { value: 1, label: "scan only" },

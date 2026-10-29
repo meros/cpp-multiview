@@ -12,7 +12,7 @@ import { createSyntaxDrawer } from "./syntax-card.js";
 import { createLog, RUN_KEYS } from "./run-output.js";
 import {
   STEPS, STEP_COUNT, FIRST_USE, ROW_CHOICES, DEFAULT_RENT, COMPARE_CHOICES, RENT_CHOICES, FREE_PLAY_EXAMPLES,
-  LAB_HREF, LAB_TEXT, captionFor, stepById,
+  captionFor, stepById,
 } from "./steps.js";
 import { $, $$, h, ic, rich, store, tipOn } from "./ui.js";
 
@@ -63,7 +63,7 @@ const el = {
   settings: $("#settings"), editorHost: $("#editor-host"), editorCard: $("#editor-card"),
   run: $("#run-button"), reset: $("#reset-button"), syntax: $("#syntax-chip"), again: $("#again-button"), show: $("#show-button"),
   tip: $("#tip-area"), done: $("#step-done"), examples: $("#examples"), examplesList: $("#examples-list"),
-  logRoot: $("#run-log"), chart: $("#chart-host"), lab: $("#lab-link"),
+  logRoot: $("#run-log"), chart: $("#chart-host"),
   stepperList: $("#stepper-list"), count: $("#step-count"), countCompact: $("#step-count-compact"), titleCompact: $("#step-title-compact"),
   progress: $("#step-progress"), progressFill: $("#step-progress-fill"),
   prev: $$(".js-prev"), next: $$(".js-next"), live: $("#live-status"),
@@ -242,7 +242,6 @@ function renderSettings(step) {
 
 function renderExamples(step) {
   el.examples.hidden = step.id !== 10;
-  el.lab.hidden = step.id !== 10;
   if (step.id !== 10 || el.examplesList.childElementCount) return;
   for (const id of FREE_PLAY_EXAMPLES) {
     const ex = EXAMPLES.find((e) => e.id === id);
@@ -446,8 +445,6 @@ function boot() {
   narrowMq.addEventListener("change", () => drawChart(currentStep()));
   el.logRoot.querySelector(".mv-run-log__clear").addEventListener("click", () => { coolTable(null); });
 
-  el.lab.querySelector("a").textContent = LAB_TEXT;
-  el.lab.querySelector("a").setAttribute("href", LAB_HREF);
   el.run.querySelector(".mv-run-button__kbd").textContent = RUN_KEYS;
 
   showStep(step0.id);

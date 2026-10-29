@@ -158,9 +158,8 @@
 .pg-log-live { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
 
 /* ---- chart and links under the log ---- */
-.pg-chart[hidden], .pg-lab[hidden] { display: none; }
+.pg-chart[hidden] { display: none; }
 .pg-chart { margin-top: var(--space-4); }
-.pg-lab { font-size: var(--text-small-size); line-height: var(--text-small-lh); }
 
 /* ---- tooltip addition in the editor ---- */
 .pg-first-use { margin-top: 2px; font: 12px/16px var(--font-sans); color: var(--color-text-muted); }
