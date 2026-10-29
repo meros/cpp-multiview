@@ -1,6 +1,6 @@
 # Playground v2: experience spec
 
-Status: design spec for the implementer, 2026-10-29. It replaces the lesson and
+Status: design spec, 2026-10-29. It replaces the lesson and
 view parts of `docs/playground-design.md` (v1). v1 stays as `lab.html`.
 
 **In short.** The new playground is a short course of ten small programs. Each

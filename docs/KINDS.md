@@ -155,15 +155,15 @@ Numbers marked "author" are the source's own measurements on its own hardware.
   a Bloom filter needs 1.44 log2(1/epsilon) bits per key. A filter in front of
   an index can reject misses cheaply. Not built.
 
-## Research reports, and what they change
+## Literature review, and what it changes
 
-Three research agents (hash, ordered, special structures) reported on 29
+Three literature reviews (hash, ordered, special structures) were written on 29
 October 2026, after the kinds above were built. Their own labels apply: the hash
-and ordered agents verified only a few claims from fetched pages and marked
-the rest as estimates; the third agent fetched nothing and quoted from memory.
+and ordered reviews verified only a few claims against the source pages and mark
+the rest as estimates; the third was written from memory without checking sources.
 Nothing below was measured here unless the Measurements section says so.
 
-**Hash agent.** Keep the Swiss kind. Add a key-grouped (CSR) hash (built since, as `grouped`; it won every duplicate-heavy case): one slot per
+**Hash review.** Keep the Swiss kind. Add a key-grouped (CSR) hash (built since, as `grouped`; it won every duplicate-heavy case): one slot per
 distinct key pointing into a contiguous id list, best at 4 or more ids per key and
 for strings (verified claim: Boost's `unordered_flat_map` is 12 to 24 % faster
 than Abseil on integer keys and slower on strings with the default hash). A
@@ -171,18 +171,18 @@ bucketized 2-choice cuckoo table (about 95 % load, estimate) and a PTHash-style
 static perfect hash are candidates for memory and frozen data. Suggestions that
 apply to `swiss` today: an overflow flag per group instead of tombstones
 (F14 and Boost do this), and a 32-bit hash fragment next to string keys.
-Rejected by this agent: Robin Hood, hopscotch, Dash, linear hashing.
+Rejected by this review: Robin Hood, hopscotch, Dash, linear hashing.
 
-**Ordered agent.** Add a cache-conscious B+tree (the write-heavy kind), a
+**Ordered review.** Add a cache-conscious B+tree (the write-heavy kind), a
 static S+ tree (verified: up to 15x faster than `std::lower_bound` at 6 to 7 %
 extra memory), ART for strings and clustered keys, and a PGM-index (verified:
 "often orders of magnitude" smaller than tree indexes; dynamic queries cost
 O(log^2 n)). It suggests replacing `ordered` and `sorted_array` if the planner
 finds no regime where they win. Our data says each wins one (see above), so I
-kept them. Rejected by this agent: Eytzinger, FAST, van Emde Boas, Judy, skip
+kept them. Rejected by this review: Eytzinger, FAST, van Emde Boas, Judy, skip
 lists, Masstree, RMI, ALEX, LIPP, LSM-style trees.
 
-**Special-structures agent (all from memory).** Roaring-style bitmaps for
+**Special-structures review (all from memory).** Roaring-style bitmaps for
 fields with under about 1000 distinct values and for AND/OR across predicates;
 a small-N sorted array with SIMD scan up to about 16 to 64 entries; a blocked
 Bloom guard only when more than about half of lookups miss; maintained
@@ -190,7 +190,7 @@ summaries (count, min, max, top-k per key). Composite keys need no new kind:
 put `(a, b)` tuples in the ordered index. Rejected: kd-tree, grid file,
 cracking, perfect hashing outside frozen tables, WAH/EWAH.
 
-Where the reports and my measurements differ: the hash agent calls Swiss
+Where the reviews and my measurements differ: the hash review calls Swiss
 "slower with many equal keys". In our run it was 4x faster than linear probing
 at 4 ids per key and 1.4x faster at 64, but a key-grouped layout was not
 tested.
@@ -225,4 +225,4 @@ should work with the current contract, but no test or example covers it.
 - [The Adaptive Radix Tree (Leis, Kemper, Neumann)](https://db.in.tum.de/~leis/papers/ART.pdf)
 - [Roaring bitmaps](https://arxiv.org/pdf/1603.06549)
 - [Binary fuse filters](https://arxiv.org/pdf/2201.01174)
-- From the agent reports: [Boost unordered_flat_map](https://bannalia.blogspot.com/2022/11/inside-boostunorderedflatmap.html), [PTHash](https://arxiv.org/abs/2104.10402), [SOSD](https://github.com/learnedsystems/SOSD), [HOT](https://dl.acm.org/doi/10.1145/3183713.3196896), [Khuong and Morin on array layouts](https://arxiv.org/abs/1509.05053), [Cuckoo filter](https://www.cs.cmu.edu/~dga/papers/cuckoo-conext2014.pdf), [Xor filter](https://arxiv.org/abs/1912.08258), [CRoaring](https://github.com/RoaringBitmap/CRoaring), [FastFilter benchmarks](https://github.com/FastFilter/fastfilter_cpp)
+- From the reviews: [Boost unordered_flat_map](https://bannalia.blogspot.com/2022/11/inside-boostunorderedflatmap.html), [PTHash](https://arxiv.org/abs/2104.10402), [SOSD](https://github.com/learnedsystems/SOSD), [HOT](https://dl.acm.org/doi/10.1145/3183713.3196896), [Khuong and Morin on array layouts](https://arxiv.org/abs/1509.05053), [Cuckoo filter](https://www.cs.cmu.edu/~dga/papers/cuckoo-conext2014.pdf), [Xor filter](https://arxiv.org/abs/1912.08258), [CRoaring](https://github.com/RoaringBitmap/CRoaring), [FastFilter benchmarks](https://github.com/FastFilter/fastfilter_cpp)

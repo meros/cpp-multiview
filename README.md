@@ -1,6 +1,12 @@
 # multiview
 
+[![CI](https://github.com/meros/cpp-multiview/actions/workflows/ci.yml/badge.svg)](https://github.com/meros/cpp-multiview/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+![C++23](https://img.shields.io/badge/C%2B%2B-23-informational)
+
 A C++23 container that picks its own indexes.
+
+**[Try it in your browser](https://multiview.meros.vip)**: ten small programs, run as WebAssembly, that show the container learning.
 
 You declare which fields may be queried. You ask questions. multiview watches
 the questions, builds an index when scans get expensive, compares index kinds
@@ -28,7 +34,7 @@ users.where(city == "Lund").explain();  // "probe grouped index on city (equalit
 users.report();                         // every index: state, probe ns, uses, memory
 ```
 
-[Interactive playground](#playground) · [Examples](examples/) · [Index kinds](docs/KINDS.md) · [Design and cost model](docs/DESIGN.md)
+[Playground](https://multiview.meros.vip) · [Examples](examples/) · [Index kinds](docs/KINDS.md) · [Design and cost model](docs/DESIGN.md)
 
 ## When to use it
 
@@ -226,7 +232,7 @@ How to read it:
 
 ## Playground
 
-Live at https://multiview.meros.vip. It is built and deployed from this repo on every push to `main` (see `Dockerfile`, `deploy/` and `.github/workflows/ci.yml`).
+Live at https://multiview.meros.vip (source: this repo, `playground/`). It is built and deployed from this repo on every push to `main` (see `Dockerfile`, `deploy/` and `.github/workflows/ci.yml`).
 
 The playground runs the container in your browser as WebAssembly, as a course of
 ten small programs. Each step is a program you can edit and run, a few lines of
@@ -294,3 +300,15 @@ are untested.
   and produces a 2.7 MB module.
 - The playground's timing is coarse in a browser. See `policy::min_sample_ns`.
 - Tested with GCC 16.2 and Emscripten 6.0.9 only.
+
+## Status and contributing
+
+multiview is an experiment, not a stable library: the API can still change, and
+only GCC 16.2 and Emscripten 6.0.9 are tested. Issues and questions are welcome
+at https://github.com/meros/cpp-multiview/issues. Open an issue before a large
+pull request. Run `make test` before you push.
+
+## Licence
+
+MIT. See [LICENSE](LICENSE). The playground fonts (Shantell Sans, Nunito) are
+under the SIL Open Font License; see `playground/web/fonts/OFL.txt`.

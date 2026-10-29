@@ -1,6 +1,6 @@
 # multiview playground: design system
 
-Status: final, for implementation. The implementer builds the page from this
+Status: final. The page is built from this
 file, `playground/web/css/tokens.css` and the experience spec. Where this file
 gives a value, use that value. Where this file says "must", there is no choice.
 Do not add a colour, a size or a duration that is not in `tokens.css`.
@@ -1652,7 +1652,7 @@ state) keeps the colour roles, icons and words of sections 2 to 9. The
 `--decor-*` colours appear only on decoration. The hierarchy of section 5
 does not change: the display face only replaces the sans in elements that
 were already at their level, and no decoration is larger or louder than the
-element it belongs to. If an implementer is unsure, the answer is no
+element it belongs to. If in doubt, use no
 decoration.
 
 | Component | Decoration allowed here | Forbidden here |
@@ -1899,7 +1899,7 @@ swaps when the file arrives (same origin, so in well under a second). The
 `url("../fonts/…")`, relative to `css/`. Fallback stacks are the
 `--font-display` and `--font-sans` values in 3.1.
 
-### 12.7 What the implementers add
+### 12.7 What the implementation adds
 
 New tokens (all in `tokens.css`, section "handmade layer"): themed
 `--paper-grid-line`, `--color-crayon`, `--decor-coral`, `--decor-sun`,

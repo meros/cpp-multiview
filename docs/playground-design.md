@@ -1,7 +1,7 @@
 # Playground design spec
 
-Status: design for implementation. Two implementers build it from this file
-alone. Where this file says "must", there is no choice to make. Where a value
+Status: the design of the first playground (`lab.html`). The current playground
+is specified in `playground-v2-experience.md`. It was written as two work packages (A: the editor, B: the page). Where this file says "must", there is no choice to make. Where a value
 is given (a size, a colour, a threshold), use that value.
 
 Contents:
@@ -1511,10 +1511,10 @@ primary style.
 | Test | `editor-demo.html` loads `css/editor.css` and mounts an editor with each example; works without B | `js/views/editor-panel.js` loads A with dynamic `import()` in a try/catch. If the import fails (A not landed yet), it mounts a read-only `<textarea>`, shows "Editor module failed to load", and disables Run. Until A lands, B develops against today's `compile()` from the old `index.html`, pasted into a scratch file outside `playground/web/`, and deletes it at integration |
 
 **Contract freeze.** The signatures in 7.11 and the `EXAMPLES` ids in 7.9 are
-the interface. Neither package changes them. If one is wrong, the implementer
-writes the problem in their final report; the lead decides.
+the interface. Neither package changes them. If one is wrong, fix the
+spec first.
 
-**Integration test** (done by the lead after both land): load `index.html`,
+**Integration test** (after both packages land): load `index.html`,
 open lesson 1, run it, open free play, type in the editor, and check the
 acceptance list below.
 
@@ -1531,7 +1531,7 @@ touches the library header and the playground:
 JSON per index after the change:
 `{ "field": "customer", "kind": "grouped", "live": true, "probe_ns": 41, "build_ms": 2.1, "uses": 5960, "bytes": 1048576, "balance": 1830000, "drop_at": -2100000 }`.
 Package B must render the bar only when `balance` is a number. Do not make this
-change as part of either package; the lead decides.
+change as part of either package.
 
 ## 12. Acceptance checklist
 
