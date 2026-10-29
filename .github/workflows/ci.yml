@@ -18,8 +18,23 @@ jobs:
       - run: make test
 
   # The playground image builds (Emscripten compiles the WebAssembly module).
+  # On main the deploy job below builds it again and ships it, so this runs on pull requests only.
   playground-image:
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
       - run: docker build -t multiview-playground .
+
+  # A push to main ships the playground to Cloud Run (project meros-apps) at
+  # https://multiview.meros.vip. The service, its deploy account and the trust to
+  # this repo are defined in the private meros/hosting repo (infra/variables.tf).
+  deploy:
+    needs: [test]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    uses: meros/deploy-workflows/.github/workflows/deploy-cloud-run.yml@main
+    with:
+      app: multiview
+    permissions:
+      contents: read
+      id-token: write
