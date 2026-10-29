@@ -19,8 +19,9 @@ for (let i = 0; i < 5000; i++) { label("churn"); churn(rnd(rows), rnd(rows / 20)
 for (let i = 0; i < 1500; i++) { label("day = ?"); where(day.eq(rnd(365))).count(); }
 for (let i = 0; i < 1500; i++) { label("amount range"); const a = rnd(99000); where(amount.between(a, a + 500)).count(); }
 for (let i = 0; i < 1500; i++) { label("customer = ?"); where(customer.eq(rnd(rows / 20))).count(); }`,
-  L5: `// Lookups by customer, a few by day, for 8 passes.
-for (let i = 0; i < 3000; i++) {
+  L5: `// Lookups by customer, a few by day, for 8 passes. Enough probes that the first index
+// spends its build time on them, which is what starts a trial.
+for (let i = 0; i < 25000; i++) {
   label("customer = ?");
   where(customer.eq(zipf(rows / 20, 0.3))).count();
 }
