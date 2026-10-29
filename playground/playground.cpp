@@ -232,7 +232,9 @@ void write_json() {
   o += "{";
   append_kv(o, "n", double(S.n)); o += ",";
   append_kv(o, "batches", double(S.batches)); o += ",";
-  append_kv(o, "batch_ops", double(S.batch_ops)); o += ",\"types\":[";
+  append_kv(o, "batch_ops", double(S.batch_ops)); o += ",";
+  append_kv(o, "prior_build_ns", S.pol.prior_build_ns); o += ",";
+  append_kv(o, "rent", S.pol.rent_ns_per_byte_op); o += ",\"types\":[";
   for (int t = 0; t < kTypes; ++t) {
     if (t) o += ",";
     o += "{\"name\":\""; o += kNames[t]; o += "\","; append_kv(o, "ops", double(S.ops[t])); o += "}";
@@ -291,6 +293,57 @@ void write_json() {
 }
 
 std::string g_exec_json;
+int g_mask = (1 << kVariants) - 1; // copies that pg_exec runs; pg_reset leaves it alone
+
+// Index changes on copy 0 during one pg_exec. The caller compares four
+// integers of stats() after each op and calls emit_events only when one moved.
+struct Watch {
+  std::vector<mv::index_info> snap;
+  mv::counters prev;
+  std::string events;
+  std::size_t count = 0;
+};
+
+void emit_event(Watch& w, int op, const char* type, const char* reason, const mv::index_info& i, double build_ms,
+                std::size_t bytes, double probe_ns, std::uint64_t uses, std::string_view other, double t_ms) {
+  if (w.count++) w.events += ",";
+  std::string& o = w.events;
+  o += "{\"op\":" + std::to_string(op) + ",\"type\":\"" + type + "\",\"reason\":\"" + reason + "\",\"field\":\"" +
+       i.field_name + "\",\"kind\":\"" + std::string(i.kind) + "\",";
+  append_kv(o, "build_ms", build_ms); o += ",";
+  append_kv(o, "bytes", double(bytes)); o += ",";
+  append_kv(o, "probe_ns", probe_ns); o += ",";
+  append_kv(o, "uses", double(uses)); o += ",\"other\":\"" + std::string(other) + "\",";
+  append_kv(o, "t_ms", t_ms);
+  o += "}";
+}
+
+void emit_events(Watch& w, MV& c, int op, bool is_write, double t_start) {
+  const mv::counters now = c.stats();
+  const std::vector<mv::index_info> cur = c.indexes();
+  const double t_ms = emscripten_get_now() - t_start;
+  const bool rent = now.rent_drops > w.prev.rent_drops, trial = now.trials > w.prev.trials;
+  auto other_live = [&](const mv::index_info& i) -> std::string_view {
+    for (const auto& j : cur)
+      if (j.field == i.field && j.kind != i.kind && j.live) return j.kind;
+    return {};
+  };
+  for (std::size_t q = 0; q < cur.size() && q < w.snap.size(); ++q) {
+    const auto &b = w.snap[q], &a = cur[q];
+    if (a.live && (!b.live || a.build_ms != b.build_ms)) {
+      const std::string_view other = other_live(a);
+      emit_event(w, op, trial && !b.live && !other.empty() ? "trial" : "build", "", a, a.build_ms, a.bytes, 0, 0, other, t_ms);
+    } else if (b.live && !a.live) {
+      const std::string_view other = other_live(b);
+      const char* why = rent ? (other.empty() ? "rent" : "twin") : is_write ? "writes" : "slower";
+      emit_event(w, op, "drop", why, b, b.build_ms, b.bytes, b.probe_ns, b.uses, other, t_ms);
+    } else if (!b.live && !a.live && a.build_ms != b.build_ms) {
+      emit_event(w, op, "drop", "unfit", a, a.build_ms, 0, 0, 0, {}, t_ms); // built and dropped in the same op
+    }
+  }
+  w.snap = cur;
+  w.prev = now;
+}
 // The answer of every op of the last pg_exec, per copy, in the order the ops were given.
 std::array<std::vector<double>, kVariants> g_results;
 
@@ -404,8 +457,18 @@ EMSCRIPTEN_KEEPALIVE void pg_exec(const double* ops, int n, int n_labels) {
     label_ms[k].assign(std::size_t(n_labels), 0);
     label_ops[k].assign(std::size_t(n_labels), 0);
   }
+  Watch watch;
+  std::vector<int> ran;
   for (int k = 0; k < kVariants; ++k) {
+    if (!(g_mask >> k & 1)) continue;
+    ran.push_back(k);
     Variant& v = S.v[k];
+    const bool watching = k == kAdaptive;
+    const double t_start = emscripten_get_now();
+    if (watching) {
+      watch.snap = v.c->indexes();
+      watch.prev = v.c->stats();
+    }
     std::size_t i = 0;
     while (i < idx.size()) {
       const int label = int(ops[idx[i] * kOpSize + 1]);
@@ -431,6 +494,12 @@ EMSCRIPTEN_KEEPALIVE void pg_exec(const double* ops, int n, int n_labels) {
           }
         }
         results[k][std::size_t(idx[q])] = res;
+        if (watching) {
+          const mv::counters& st = v.c->stats();
+          if (st.builds != watch.prev.builds || st.drops != watch.prev.drops || st.rent_drops != watch.prev.rent_drops ||
+              st.trials != watch.prev.trials)
+            emit_events(watch, *v.c, idx[q], r[0] != 0, t_start);
+        }
       }
       const double dt = emscripten_get_now() - t0;
       if (label >= 0 && label < n_labels) { label_ms[k][std::size_t(label)] += dt; label_ops[k][std::size_t(label)] += j - i; }
@@ -444,16 +513,18 @@ EMSCRIPTEN_KEEPALIVE void pg_exec(const double* ops, int n, int n_labels) {
   // Same answers everywhere?
   int bad = -1;
   for (int q = 0; q < n && bad < 0; ++q)
-    for (int k = 1; k < kVariants; ++k)
-      if (results[k][std::size_t(q)] != results[0][std::size_t(q)]) { bad = q; break; }
+    for (std::size_t m = 1; m < ran.size(); ++m)
+      if (results[std::size_t(ran[m])][std::size_t(q)] != results[std::size_t(ran[0])][std::size_t(q)]) { bad = q; break; }
 
   std::string& o = g_exec_json;
   o = "{";
   append_kv(o, "ops", n); o += ",";
   append_kv(o, "first_disagreement", bad); o += ",\"variants\":[";
-  for (int k = 0; k < kVariants; ++k) {
-    if (k) o += ",";
-    o += "{\"name\":\""; o += S.v[k].name; o += "\",";
+  bool first_v = true;
+  for (int k : ran) {
+    if (!first_v) o += ",";
+    first_v = false;
+    o += "{"; append_kv(o, "id", k); o += ",\"name\":\""; o += S.v[k].name; o += "\",";
     append_kv(o, "ns", n ? total_ms[k] * 1e6 / n : 0); o += ",";
     append_kv(o, "bytes", double(S.v[k].c->index_bytes())); o += ",\"labels\":[";
     for (int l = 0; l < n_labels; ++l) {
@@ -464,9 +535,24 @@ EMSCRIPTEN_KEEPALIVE void pg_exec(const double* ops, int n, int n_labels) {
     }
     o += "]}";
   }
-  o += "]}";
+  o += "],\"events\":[" + watch.events + "]}";
   S.batches += 1;
   write_json();
+}
+
+// Which copies pg_exec runs: bit k for copy k, all six by default. Skipped copies
+// give zero answers and no timings, and are left out of the agreement check.
+EMSCRIPTEN_KEEPALIVE void pg_set_copies(int mask) { g_mask = mask & ((1 << kVariants) - 1); }
+
+// Customer, amount and day of row `id` in the adaptive copy; zeros if the table no longer has it.
+EMSCRIPTEN_KEEPALIVE const double* pg_row(int id) {
+  static double r[3];
+  r[0] = r[1] = r[2] = 0;
+  if (S.v[kAdaptive].c && id >= 0 && S.v[kAdaptive].c->contains(mv::id(id))) {
+    const Row& x = (*S.v[kAdaptive].c)[mv::id(id)];
+    r[0] = double(x.customer); r[1] = double(x.amount); r[2] = double(x.day);
+  }
+  return r;
 }
 
 // The adaptive copy's plan for one compiled query op.

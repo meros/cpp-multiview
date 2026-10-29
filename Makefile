@@ -41,7 +41,7 @@ playground:
 	EM_CACHE=$(abspath $(BUILD))/emcache HOME=$(abspath $(BUILD))/emhome \
 	$(EMCC) -std=c++23 -O2 -Iinclude playground/playground.cpp -o playground/web/multiview.js \
 	  -sMODULARIZE=1 -sEXPORT_NAME=createMultiview -sALLOW_MEMORY_GROWTH=1 -sENVIRONMENT=web,node \
-	  -sEXPORTED_FUNCTIONS=_pg_reset,_pg_run,_pg_exec,_pg_explain,_pg_json,_pg_exec_json,_pg_results,_malloc,_free \
+	  -sEXPORTED_FUNCTIONS=_pg_reset,_pg_run,_pg_exec,_pg_explain,_pg_json,_pg_exec_json,_pg_results,_pg_set_copies,_pg_row,_malloc,_free \
 	  -sEXPORTED_RUNTIME_METHODS=ccall,cwrap,UTF8ToString,HEAPF64
 
 serve:
