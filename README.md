@@ -226,6 +226,8 @@ How to read it:
 
 ## Playground
 
+Live at https://multiview.meros.vip. It is built and deployed from this repo on every push to `main` (see `Dockerfile`, `deploy/` and `.github/workflows/ci.yml`).
+
 The playground runs the container in the browser as WebAssembly. It holds five
 copies of one table and sends them the same workload:
 
