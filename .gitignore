@@ -1,0 +1,5 @@
+build/
+*.o
+# Built by `make playground` (and by the Dockerfile); never committed.
+playground/web/multiview.js
+playground/web/multiview.wasm
