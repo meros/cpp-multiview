@@ -291,6 +291,8 @@ void write_json() {
 }
 
 std::string g_exec_json;
+// The answer of every op of the last pg_exec, per copy, in the order the ops were given.
+std::array<std::vector<double>, kVariants> g_results;
 
 } // namespace
 
@@ -436,6 +438,9 @@ EMSCRIPTEN_KEEPALIVE void pg_exec(const double* ops, int n, int n_labels) {
       i = j;
     }
   }
+  for (int k = 0; k < kVariants; ++k) {
+    g_results[k].assign(results[k].begin(), results[k].end());
+  }
   // Same answers everywhere?
   int bad = -1;
   for (int q = 0; q < n && bad < 0; ++q)
@@ -474,5 +479,12 @@ EMSCRIPTEN_KEEPALIVE const char* pg_explain(const double* op_record) {
 
 EMSCRIPTEN_KEEPALIVE const char* pg_json() { return g_json.c_str(); }
 EMSCRIPTEN_KEEPALIVE const char* pg_exec_json() { return g_exec_json.c_str(); }
+
+// The answer of every op of the last pg_exec for one copy: a query gives its
+// count, 1 or 0 for exists, or the first id plus one; a write gives 1.
+// Read `n` doubles from the returned address (HEAPF64).
+EMSCRIPTEN_KEEPALIVE const double* pg_results(int variant) {
+  return variant >= 0 && variant < kVariants ? g_results[variant].data() : nullptr;
+}
 
 }
