@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Editor demo</title>
+<link rel="stylesheet" href="css/editor.css">
+<style>
+  /* Demo-only tokens, so the page works without package B. The real page defines these in tokens.css. */
+  :root {
+    --bg: #fbfbf9; --panel: #ffffff; --panel-2: #f5f5f1; --ink: #1c1d1f; --muted: #5d6168; --line: #e3e3de; --grid-strong: #d5d5cf;
+    --accent: #0063a8; --focus: #0063a8; --good: #1f7a45; --bad: #b3261e; --warn: #8a6200; --highlight: #e0a800;
+    --tk-com: #6e7781; --tk-str: #0a6b36; --tk-num: #9a4a00; --tk-kw: #8b1fa8; --tk-field: #0063a8; --tk-pred: #007a5a;
+    --tk-query: #1c1d1f; --tk-term: #b3261e; --tk-write: #c84f00; --tk-help: #5d6168;
+    --mono: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, monospace;
+    --sans: system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #131416; --panel: #1b1c1f; --panel-2: #17181b; --ink: #ecece8; --muted: #9a9ea6; --line: #2c2e33; --grid-strong: #383a40;
+      --accent: #7fb8f5; --focus: #7fb8f5; --good: #55c785; --bad: #ff8a80; --warn: #e8c060; --highlight: #f0c24a;
+      --tk-com: #8b949e; --tk-str: #7ee2a8; --tk-num: #ffb074; --tk-kw: #d6a2f2; --tk-field: #7fb8f5; --tk-pred: #2ec4a0;
+      --tk-query: #ecece8; --tk-term: #ff8a80; --tk-write: #ff8a4c; --tk-help: #a8acb3;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #131416; --panel: #1b1c1f; --panel-2: #17181b; --ink: #ecece8; --muted: #9a9ea6; --line: #2c2e33; --grid-strong: #383a40;
+    --accent: #7fb8f5; --focus: #7fb8f5; --good: #55c785; --bad: #ff8a80; --warn: #e8c060; --highlight: #f0c24a;
+    --tk-com: #8b949e; --tk-str: #7ee2a8; --tk-num: #ffb074; --tk-kw: #d6a2f2; --tk-field: #7fb8f5; --tk-pred: #2ec4a0;
+    --tk-query: #ecece8; --tk-term: #ff8a80; --tk-write: #ff8a4c; --tk-help: #a8acb3;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font: 15px/24px var(--sans); }
+  main { max-width: 1100px; margin: 0 auto; padding: 16px; }
+  h1 { font-size: 24px; line-height: 32px; margin: 0 0 8px; }
+  h2 { font-size: 12px; line-height: 16px; margin: 24px 0 8px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 600; }
+  .bar { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 8px 0; }
+  button, select, input { font: inherit; padding: 5px 10px; border: 1px solid var(--line); border-radius: 7px; background: var(--panel); color: var(--ink); }
+  button { cursor: pointer; }
+  button:hover { border-color: var(--accent); }
+  button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+  input[type=number] { width: 100px; }
+  .cols { display: grid; gap: 16px; grid-template-columns: 1fr 1fr; align-items: start; }
+  @media (max-width: 899px) { .cols { grid-template-columns: 1fr; } }
+  pre.out { margin: 0; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--panel-2); font: 13px/20px var(--mono); overflow: auto; max-height: 360px; white-space: pre-wrap; }
+  .ok { color: var(--good); } .bad { color: var(--bad); }
+  details { margin: 8px 0; }
+  summary { cursor: pointer; padding: 4px 0; }
+  .note { color: var(--muted); font-size: 13px; line-height: 20px; max-width: 80ch; }
+</style>
+</head>
+<body>
+<main>
+  <h1>Editor demo</h1>
+  <p class="note">Standalone page for the editor package. Try: type <code>customer.</code>; <code>where(x).</code>; Ctrl+Space at a statement start; <code>between(1, </code> for signature help; <code>where(customer.eq(1), customer.ge(2)).count();</code> for an error; Ctrl or Cmd+Enter to run; Tab and Shift+Tab on selected lines; Ctrl+/ to comment; Escape twice to leave.</p>
+
+  <div class="bar">
+    <label>Example <select id="example"></select></label>
+    <label>Rows <input id="rows" type="number" value="50000" min="1000" step="1000"></label>
+    <button id="ro" aria-pressed="false">Read-only: off</button>
+    <button id="long">300 lines</button>
+    <button id="wide">Long lines</button>
+    <button id="mark">Add markers</button>
+    <button id="hl">Highlight lines 2-3</button>
+    <button id="theme">Theme: auto</button>
+  </div>
+
+  <div id="host"></div>
+
+  <div class="cols">
+    <div>
+      <h2>Compile result <span id="events" class="note"></span></h2>
+      <pre class="out" id="result" aria-live="polite"></pre>
+    </div>
+    <div>
+      <h2>C++ equivalent <button id="copy" type="button">Copy</button></h2>
+      <pre class="out ed-code" id="cpp"></pre>
+    </div>
+  </div>
+
+  <h2>Share link</h2>
+  <div class="bar">
+    <button id="share">Encode current script</button>
+    <button id="restore">Decode into the editor</button>
+    <span class="note" id="shareout"></span>
+  </div>
+
+  <h2>One editor per example</h2>
+  <div id="all"></div>
+</main>
+
+<script type="module">
+import { createEditor } from "./js/editor/editor.js";
+import { EXAMPLES } from "./js/editor/examples.js";
+import { highlight } from "./js/editor/highlight.js";
+import { cppText } from "./js/editor/compile.js";
+import { encodeShare, decodeShare, shareTooLong, SHARE_TOO_LONG } from "./js/editor/share.js";
+
+const $ = (id) => document.getElementById(id);
+const yours = [1, 8, 4];
+
+const ed = createEditor($("host"), { value: EXAMPLES[0].script, rows: 50000 });
+const sel = $("example");
+EXAMPLES.forEach((e) => sel.add(new Option(e.title, e.id)));
+sel.addEventListener("change", () => ed.setValue(EXAMPLES.find((e) => e.id === sel.value).script));
+
+let counts = { change: 0, compiled: 0, run: 0, cursor: 0 };
+const tick = () => { $("events").textContent = `events: change ${counts.change}, compiled ${counts.compiled}, run ${counts.run}, cursor ${counts.cursor}`; };
+ed.on("change", () => { counts.change++; tick(); });
+ed.on("cursor", () => { counts.cursor++; tick(); });
+ed.on("run", () => { counts.run++; tick(); });
+ed.on("compiled", (r) => {
+  counts.compiled++; tick();
+  const res = $("result");
+  if (r.ok) {
+    res.innerHTML = `<span class="ok">ok</span>: ${r.ops.length} ops, ${r.labels.length} labels (${r.labels.join(", ")})\n` +
+      `shapes:\n  ${r.shapeText.join("\n  ")}\nwarnings: ${r.warnings.length}`;
+  } else {
+    res.textContent = "";
+    const s = document.createElement("span"); s.className = "bad"; s.textContent = "error";
+    res.append(s, ` at line ${r.error.line ?? "?"}, column ${r.error.col ?? "?"}: ${r.error.message}`);
+  }
+  if (r.warnings && r.warnings.length) res.append("\n" + r.warnings.map((w) => `warning line ${w.line}, col ${w.col}: ${w.message}`).join("\n"));
+  $("cpp").innerHTML = highlight(cppText(r, yours), "cpp");
+});
+$("copy").addEventListener("click", () => navigator.clipboard && navigator.clipboard.writeText($("cpp").textContent));
+
+$("rows").addEventListener("change", (e) => ed.setRowCount(Number(e.target.value)));
+$("ro").addEventListener("click", (e) => {
+  const on = e.currentTarget.getAttribute("aria-pressed") !== "true";
+  e.currentTarget.setAttribute("aria-pressed", String(on));
+  e.currentTarget.textContent = "Read-only: " + (on ? "on" : "off");
+  ed.setReadOnly(on);
+});
+$("long").addEventListener("click", () => {
+  const lines = [];
+  for (let i = 0; i < 300; i++) lines.push(i % 25 === 0 ? `// block ${i / 25 + 1}` : `for (let i = 0; i < 2; i++) { label("p${i % 7}"); where(customer.eq(rnd(${i + 10}))).count(); }`);
+  ed.setValue(lines.join("\n"));
+});
+$("wide").addEventListener("click", () => {
+  const parts = Array.from({ length: 40 }, (_, i) => `where(customer.eq(${i})).count();`);
+  ed.setValue("// one very long line follows\n" + parts.join(" ") + "\nwhere(day.eq(1)).count(); // end");
+});
+$("mark").addEventListener("click", () => ed.setMarkers([
+  { line: 1, col: 4, endCol: 12, severity: "warning", message: "Marker from the host page (warning)." },
+  { line: 2, severity: "error", message: "Marker from the host page (whole line)." },
+]));
+$("hl").addEventListener("click", () => ed.highlightLines(2, 3, "ed-hl-focus"));
+$("theme").addEventListener("click", (e) => {
+  const cur = document.documentElement.dataset.theme;
+  const next = cur === undefined ? "light" : cur === "light" ? "dark" : undefined;
+  if (next) document.documentElement.dataset.theme = next; else delete document.documentElement.dataset.theme;
+  e.currentTarget.textContent = "Theme: " + (next ?? "auto");
+});
+
+$("share").addEventListener("click", async () => {
+  const hash = await encodeShare({ script: ed.getValue(), knobs: { rows: Number($("rows").value), yoursMask: yours } });
+  $("shareout").textContent = shareTooLong(hash) ? SHARE_TOO_LONG : `${hash.length} characters: ${hash.slice(0, 48)}...`;
+  if (!shareTooLong(hash)) location.hash = hash;
+});
+$("restore").addEventListener("click", async () => {
+  const st = await decodeShare(location.hash);
+  $("shareout").textContent = st ? `restored ${st.script.length} characters, knobs ${JSON.stringify(st.knobs)}` : "nothing to restore in the URL hash";
+  if (st) ed.setValue(st.script);
+});
+
+// One editor per example, to check each compiles and highlights.
+for (const e of EXAMPLES) {
+  const d = document.createElement("details");
+  const s = document.createElement("summary");
+  s.textContent = `${e.id}: ${e.title}`;
+  const h = document.createElement("div");
+  d.append(s, h);
+  $("all").appendChild(d);
+  let made = false;
+  d.addEventListener("toggle", () => {
+    if (!d.open || made) return;
+    made = true;
+    const sub = createEditor(h, { value: e.script, rows: 50000 });
+    const note = document.createElement("p");
+    note.className = "note";
+    note.textContent = e.description;
+    h.prepend(note);
+    sub.on("compiled", (r) => { note.textContent = e.description + (r.ok ? `  [${r.ops.length} ops]` : `  [error: ${r.error.message}]`); });
+  });
+}
+</script>
+</body>
+</html>

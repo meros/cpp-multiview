@@ -1,0 +1,108 @@
+/* The page grid (spec 8.3): header, rail, lesson, run, editor, chart, knobs, results, C++, analysis. */
+.app {
+  display: grid;
+  gap: var(--s-4);
+  padding: var(--s-4);
+  max-width: 1440px;
+  margin: 0 auto;
+  grid-template-columns: 232px minmax(520px, 1fr) minmax(400px, 440px);
+  grid-template-areas:
+    "header  header    header"
+    "rail    lesson    run"
+    "rail    lesson    editor"
+    "rail    chart     editor"
+    "rail    chart     knobs"
+    "rail    results   cpp"
+    "analysis analysis analysis";
+  align-items: start;
+}
+.app-main { display: contents; }
+
+@media (max-width: 1199px) {
+  .app {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-areas:
+      "header  header"
+      "stepper stepper"
+      "lesson  run"
+      "lesson  editor"
+      "chart   chart"
+      "results results"
+      "knobs   cpp"
+      "analysis analysis";
+  }
+}
+@media (max-width: 767px) {
+  .app {
+    grid-template-columns: minmax(0, 1fr);
+    padding: var(--s-3) 16px;
+    grid-template-areas: "header" "stepper" "lesson" "run" "chart" "results" "editor" "knobs" "analysis" "cpp";
+  }
+  .panel.run { position: sticky; bottom: 0; z-index: 20; box-shadow: 0 -2px 8px rgb(0 0 0 / 0.12); }
+}
+
+.rail { display: block; position: sticky; top: var(--s-4); align-self: start; }
+.stepper { display: none; }
+@media (max-width: 1199px) {
+  .rail { display: none; }
+  .stepper { display: block; }
+}
+
+/* The analysis band: inspector full width, plans and memory side by side. */
+.analysis {
+  display: grid;
+  gap: var(--s-4);
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-areas: "inspector inspector" "plans memory";
+  min-width: 0;
+}
+.analysis .inspector { grid-area: inspector; }
+.analysis .plans { grid-area: plans; }
+.analysis .memory { grid-area: memory; }
+@media (max-width: 1199px) {
+  .analysis { grid-template-columns: minmax(0, 1fr); grid-template-areas: "inspector" "plans" "memory"; }
+}
+
+/* Grid children must be able to shrink: no horizontal page scroll at any width. */
+.app > *, .app-main > *, .analysis > * { min-width: 0; }
+
+.app-header {
+  display: flex; align-items: center; gap: var(--s-4); flex-wrap: wrap;
+  padding: var(--s-1) 0;
+}
+.app-header h1 { font-size: var(--t-xl); line-height: var(--lh-xl); letter-spacing: -0.01em; flex: 1 1 auto; }
+.header-tools { display: flex; gap: var(--s-2); align-items: center; flex-wrap: wrap; }
+.share-msg { font-size: var(--t-xs); color: var(--muted); max-width: 32ch; }
+
+.app-header { grid-area: header; }
+.rail { grid-area: rail; }
+.stepper { grid-area: stepper; }
+.panel.lesson { grid-area: lesson; }
+.panel.run { grid-area: run; }
+.panel.editor { grid-area: editor; }
+.panel.chart { grid-area: chart; }
+.panel.knobs { grid-area: knobs; }
+.panel.results { grid-area: results; }
+.panel.cpp { grid-area: cpp; }
+.analysis { grid-area: analysis; }
+.analysis .panel { grid-area: auto; }
+.analysis .inspector { grid-area: inspector; }
+.analysis .plans { grid-area: plans; }
+.analysis .memory { grid-area: memory; }
+
+
+/* Desktop: two stacked columns, so a tall panel in one column never leaves a gap in the other.
+   Below 1200px the wrappers disappear (display: contents) and the flat grid above applies. */
+.col-main, .col-side { display: contents; }
+@media (min-width: 1200px) {
+  .app {
+    grid-template-areas:
+      "header   header header"
+      "rail     main   side"
+      "analysis analysis analysis";
+  }
+  .col-main, .col-side { display: grid; gap: var(--s-4); align-content: start; min-width: 0; }
+  .col-main { grid-area: main; }
+  .col-side { grid-area: side; }
+  .app .col-main > .panel, .app .col-side > .panel { grid-area: auto; }
+}

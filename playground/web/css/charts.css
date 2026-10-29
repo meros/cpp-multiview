@@ -1,0 +1,30 @@
+/* Canvas sizes, chart toolbars, tooltips and the text-alternative data tables. */
+.chart-toolbar { display: flex; flex-wrap: wrap; gap: var(--s-3); align-items: center; }
+.axis-title { font-size: var(--t-xs); line-height: var(--lh-xs); color: var(--muted); }
+.chart-wrap { position: relative; width: 100%; }
+.chart-canvas { display: block; width: 100%; height: 340px; border-radius: var(--r-card); }
+.chart-canvas:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.sweep-canvas { height: 340px; }
+.memory-canvas { height: 300px; }
+@media (max-width: 767px) {
+  .chart-canvas, .sweep-canvas { height: 220px; }
+  .memory-canvas { height: 240px; }
+}
+.chart-legend { font-size: var(--t-xs); color: var(--muted); display: flex; gap: var(--s-3); flex-wrap: wrap; }
+
+.chart-tip {
+  position: absolute; z-index: 10; pointer-events: none; max-width: 340px;
+  background: var(--panel); color: var(--ink); border: 1px solid var(--grid-strong); border-radius: var(--r-card);
+  box-shadow: 0 4px 14px rgb(0 0 0 / 0.18); padding: var(--s-2) var(--s-3); font-size: var(--t-xs); line-height: var(--lh-xs);
+  animation: fadein 100ms var(--ease);
+}
+.tip-head { font-weight: 700; margin-bottom: 4px; }
+.tip-row { display: grid; grid-template-columns: 28px auto auto 1fr; gap: 6px; align-items: center; white-space: nowrap; }
+.tip-name { font-weight: 500; }
+.tip-val { font-family: var(--mono); font-variant-numeric: tabular-nums; text-align: right; }
+.tip-words { color: var(--muted); }
+.tip-event { margin-top: 4px; }
+.tip-note { margin-top: 6px; color: var(--muted); white-space: normal; }
+
+.data-table-box { max-height: 260px; overflow: auto; border: 1px solid var(--line); border-radius: var(--r-card); }
+table.data th[scope="row"] { color: var(--ink); font-weight: 500; }

@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>multiview playground</title>
+<link rel="stylesheet" href="css/tokens.css">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/layout.css">
+<link rel="stylesheet" href="css/components.css">
+<link rel="stylesheet" href="css/charts.css">
+<link rel="stylesheet" href="css/editor.css">
+</head>
+<body>
+<a class="skip" id="skip-link" href="#lesson-heading">Skip to lesson</a>
+<div class="app">
+  <header class="app-header">
+    <h1>multiview playground</h1>
+    <div class="seg" id="mode-switch" role="group" aria-label="Mode">
+      <button type="button" data-mode="lesson" aria-pressed="true">Lessons</button>
+      <button type="button" data-mode="free" aria-pressed="false">Free play</button>
+    </div>
+    <div class="header-tools">
+      <span class="share-msg" id="share-status" role="status" aria-live="polite"></span>
+      <button type="button" class="btn" id="share-btn">Share</button>
+      <button type="button" class="btn" id="theme-btn">Theme: auto</button>
+    </div>
+  </header>
+
+  <nav class="rail" id="rail" aria-label="Lessons"></nav>
+  <nav class="stepper" id="stepper" aria-label="Lessons"></nav>
+
+  <main class="app-main">
+    <div class="col-main">
+  <section class="panel lesson" id="lesson-panel" aria-label="Lesson">
+        <div id="lesson-root"></div>
+      </section>
+
+  <section class="panel chart" id="chart-panel" data-panel="chart" aria-labelledby="chart-title">
+        <div class="panel-head"><h2 class="panel-title" id="chart-title">Time per operation</h2><button type="button" class="panel-toggle" aria-expanded="true" aria-controls="chart-root">Hide</button></div>
+        <p class="panel-unused" hidden>Not used in this lesson.</p>
+        <div class="panel-body" id="chart-root"></div>
+      </section>
+
+  <section class="panel results" id="results" data-panel="results" aria-labelledby="results-title">
+        <div class="panel-head"><h2 class="panel-title" id="results-title">Results</h2><button type="button" class="panel-toggle" aria-expanded="true" aria-controls="results-root">Hide</button></div>
+        <p class="panel-unused" hidden>Not used in this lesson.</p>
+        <div class="panel-body" id="results-root"></div>
+      </section>
+    </div>
+
+    <div class="col-side">
+  <section class="panel run" id="run-panel" aria-labelledby="run-title">
+        <h2 class="panel-title" id="run-title">Run</h2>
+        <div id="run-root"></div>
+      </section>
+
+  <section class="panel editor" id="editor-panel" aria-labelledby="editor-title">
+        <h2 class="panel-title" id="editor-title">Workload script</h2>
+        <div id="editor-root"></div>
+      </section>
+
+  <section class="panel knobs" id="knobs-panel" aria-labelledby="knobs-title">
+        <h2 class="panel-title" id="knobs-title">Knobs</h2>
+        <div id="knobs-root"></div>
+      </section>
+
+  <details class="panel cpp" id="cpp-panel">
+        <summary>C++ equivalent</summary>
+        <div id="cpp-root"></div>
+      </details>
+    </div>
+
+    <div class="analysis">
+      <section class="panel inspector" id="inspector" data-panel="inspector" aria-labelledby="inspector-title">
+        <div class="panel-head"><h2 class="panel-title" id="inspector-title">Adaptive copy: indexes</h2><button type="button" class="panel-toggle" aria-expanded="true" aria-controls="inspector-root">Hide</button></div>
+        <p class="panel-unused" hidden>Not used in this lesson.</p>
+        <div class="panel-body" id="inspector-root"></div>
+      </section>
+      <section class="panel plans" id="plans" data-panel="plans" aria-labelledby="plans-title">
+        <div class="panel-head"><h2 class="panel-title" id="plans-title">Plans</h2><button type="button" class="panel-toggle" aria-expanded="true" aria-controls="plans-root">Hide</button></div>
+        <p class="panel-unused" hidden>Not used in this lesson.</p>
+        <div class="panel-body" id="plans-root"></div>
+      </section>
+      <section class="panel memory" id="memory" data-panel="memory" aria-labelledby="memory-title">
+        <div class="panel-head"><h2 class="panel-title" id="memory-title">Memory against time</h2><button type="button" class="panel-toggle" aria-expanded="true" aria-controls="memory-root">Hide</button></div>
+        <p class="panel-unused" hidden>Not used in this lesson.</p>
+        <div class="panel-body" id="memory-root"></div>
+      </section>
+    </div>
+  </main>
+</div>
+<script src="multiview.js"></script>
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
