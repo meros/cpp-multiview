@@ -1,0 +1,25 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  # The differential tests, under AddressSanitizer and UndefinedBehaviorSanitizer.
+  test:
+    runs-on: ubuntu-latest
+    container: gcc:16.2
+    steps:
+      - uses: actions/checkout@v7
+      - run: make test
+
+  # The playground image builds (Emscripten compiles the WebAssembly module).
+  playground-image:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - run: docker build -t multiview-playground .
